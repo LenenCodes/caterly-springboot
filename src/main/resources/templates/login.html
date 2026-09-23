@@ -1,0 +1,645 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sign In | Caterly</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+	href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+	rel="stylesheet">
+
+
+<style>
+
+/* =========================================
+           GLOBAL
+        ========================================= */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--espresso: #241b17;
+	--espresso-light: #3a2b24;
+	--cream: #f8f5ef;
+	--white: #ffffff;
+	--terracotta: #b85c38;
+	--terracotta-dark: #974729;
+	--gold: #c49a5a;
+	--text: #2c2521;
+	--muted: #81766f;
+	--border: #e4ded7;
+	--danger-bg: #fff1ef;
+	--danger-text: #a43d32;
+	--success-bg: #edf8f0;
+	--success-text: #287343;
+}
+
+body {
+	min-height: 100vh;
+	font-family: "DM Sans", sans-serif;
+	background: var(--cream);
+	color: var(--text);
+}
+
+/* =========================================
+           MAIN PAGE
+        ========================================= */
+.page {
+	min-height: 100vh;
+	display: grid;
+	grid-template-columns: 1.05fr 0.95fr;
+}
+
+/* =========================================
+           LEFT VISUAL PANEL
+        ========================================= */
+.visual-panel {
+	position: relative;
+	min-height: 100vh;
+	overflow: hidden;
+	background: linear-gradient(135deg, rgba(36, 27, 23, 0.88),
+		rgba(36, 27, 23, 0.35)),
+		url("https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=85")
+		center/cover no-repeat;
+}
+
+.visual-panel::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(20, 14, 11, 0.9), transparent
+		55%);
+}
+
+/* =========================================
+           BRAND
+        ========================================= */
+.brand {
+	position: absolute;
+	top: 42px;
+	left: 48px;
+	z-index: 2;
+	color: var(--white);
+	font-size: 1.45rem;
+	font-weight: 700;
+	letter-spacing: -0.5px;
+}
+
+.brand span {
+	color: #e5b978;
+}
+
+/* =========================================
+           HERO TEXT
+        ========================================= */
+.visual-content {
+	position: absolute;
+	left: 48px;
+	right: 48px;
+	bottom: 58px;
+	z-index: 2;
+	color: var(--white);
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 18px;
+	padding: 8px 13px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(8px);
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.7px;
+	text-transform: uppercase;
+}
+
+.eyebrow-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #e5b978;
+}
+
+.visual-content h1 {
+	max-width: 600px;
+	margin-bottom: 18px;
+	font-family: "Playfair Display", serif;
+	font-size: clamp(2.8rem, 4vw, 4.5rem);
+	line-height: 1.03;
+	font-weight: 600;
+	letter-spacing: -1.5px;
+}
+
+.visual-content p {
+	max-width: 510px;
+	color: rgba(255, 255, 255, 0.78);
+	font-size: 1rem;
+	line-height: 1.7;
+}
+
+/* =========================================
+           RIGHT FORM PANEL
+        ========================================= */
+.form-panel {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 50px;
+	background: var(--cream);
+}
+
+.form-container {
+	width: 100%;
+	max-width: 430px;
+}
+
+.mobile-brand {
+	display: none;
+}
+
+/* =========================================
+           FORM HEADER
+        ========================================= */
+.form-header {
+	margin-bottom: 34px;
+}
+
+.form-header h2 {
+	margin-bottom: 10px;
+	font-family: "Playfair Display", serif;
+	font-size: 2.45rem;
+	line-height: 1.15;
+	color: var(--espresso);
+}
+
+.form-header p {
+	color: var(--muted);
+	font-size: 0.95rem;
+	line-height: 1.6;
+}
+
+/* =========================================
+           ALERTS
+        ========================================= */
+.alert {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 22px;
+	padding: 14px 16px;
+	border-radius: 12px;
+	font-size: 0.88rem;
+	line-height: 1.5;
+}
+
+.alert-icon {
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+.alert-danger {
+	color: var(--danger-text);
+	background: var(--danger-bg);
+	border: 1px solid #f4d3ce;
+}
+
+.alert-danger .alert-icon {
+	background: #e9a39a;
+	color: white;
+}
+
+.alert-success {
+	color: var(--success-text);
+	background: var(--success-bg);
+	border: 1px solid #cfe8d6;
+}
+
+.alert-success .alert-icon {
+	background: #70b986;
+	color: white;
+}
+
+/* =========================================
+           FORM GROUP
+        ========================================= */
+.form-group {
+	margin-bottom: 21px;
+}
+
+.form-label-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 9px;
+}
+
+label {
+	color: var(--espresso);
+	font-size: 0.86rem;
+	font-weight: 600;
+}
+
+/* =========================================
+           INPUT
+        ========================================= */
+.input-wrapper {
+	position: relative;
+}
+
+input {
+	width: 100%;
+	height: 54px;
+	padding: 0 16px;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	outline: none;
+	background: var(--white);
+	color: var(--text);
+	font-family: inherit;
+	font-size: 0.93rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s
+		ease;
+}
+
+input::placeholder {
+	color: #aaa19a;
+}
+
+input:hover {
+	border-color: #cfc6be;
+}
+
+input:focus {
+	border-color: var(--terracotta);
+	box-shadow: 0 0 0 4px rgba(184, 92, 56, 0.10);
+}
+
+input[type="password"] {
+	padding-right: 60px;
+}
+
+/* =========================================
+           PASSWORD TOGGLE
+        ========================================= */
+.password-toggle {
+	position: absolute;
+	top: 50%;
+	right: 15px;
+	transform: translateY(-50%);
+	border: none;
+	background: transparent;
+	color: var(--muted);
+	cursor: pointer;
+	font-size: 0.78rem;
+	font-family: inherit;
+	font-weight: 600;
+}
+
+.password-toggle:hover {
+	color: var(--terracotta);
+}
+
+/* =========================================
+           SIGN IN BUTTON
+        ========================================= */
+.btn {
+	width: 100%;
+	height: 54px;
+	margin-top: 7px;
+	border: none;
+	border-radius: 12px;
+	background: var(--espresso);
+	color: var(--white);
+	font-family: inherit;
+	font-size: 0.92rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s
+		ease;
+}
+
+.btn:hover {
+	background: var(--terracotta);
+	transform: translateY(-1px);
+	box-shadow: 0 8px 22px rgba(36, 27, 23, 0.16);
+}
+
+.btn:active {
+	transform: translateY(0);
+}
+
+/* =========================================
+           SIGN UP
+        ========================================= */
+.signup {
+	margin-top: 28px;
+	text-align: center;
+	color: var(--muted);
+	font-size: 0.88rem;
+}
+
+.signup a {
+	color: var(--terracotta);
+	font-weight: 700;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.signup a:hover {
+	color: var(--terracotta-dark);
+	text-decoration: underline;
+}
+
+/* =========================================
+           SECURITY NOTE
+        ========================================= */
+.secure-note {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 7px;
+	margin-top: 28px;
+	color: #999089;
+	font-size: 0.76rem;
+}
+
+.secure-icon {
+	font-size: 0.8rem;
+}
+
+/* =========================================
+           RESPONSIVE
+        ========================================= */
+@media ( max-width : 900px) {
+	.page {
+		grid-template-columns: 1fr;
+	}
+	.visual-panel {
+		display: none;
+	}
+	.form-panel {
+		min-height: 100vh;
+		padding: 30px 22px;
+	}
+	.mobile-brand {
+		display: block;
+		margin-bottom: 45px;
+		color: var(--espresso);
+		font-size: 1.4rem;
+		font-weight: 700;
+	}
+	.mobile-brand span {
+		color: var(--terracotta);
+	}
+	.form-container {
+		max-width: 440px;
+	}
+}
+
+@media ( max-width : 480px) {
+	.form-panel {
+		padding: 25px 18px;
+	}
+	.mobile-brand {
+		margin-bottom: 38px;
+	}
+	.form-header h2 {
+		font-size: 2.1rem;
+	}
+	.form-header {
+		margin-bottom: 28px;
+	}
+	input, .btn {
+		height: 52px;
+	}
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+	<div class="page">
+
+
+		<!-- =========================================
+         LEFT SIDE
+    ========================================== -->
+
+		<section class="visual-panel">
+
+
+			<div class="brand">
+
+				Cater<span>ly</span>
+
+			</div>
+
+
+			<div class="visual-content">
+
+
+				<div class="eyebrow">
+
+					<span class="eyebrow-dot"></span> Event catering made simple
+
+				</div>
+
+
+				<h1>Make every gathering worth remembering.</h1>
+
+
+				<p>Discover trusted caterers, explore delicious menus, and
+					create the perfect dining experience for your next celebration.</p>
+
+
+			</div>
+
+
+		</section>
+
+
+
+		<!-- =========================================
+         RIGHT SIDE
+    ========================================== -->
+
+		<main class="form-panel">
+
+
+			<div class="form-container">
+
+
+				<!-- Mobile Brand -->
+
+				<div class="mobile-brand">
+
+					Cater<span>ly</span>
+
+				</div>
+
+
+
+				<!-- Header -->
+
+				<div class="form-header">
+
+					<h2>Welcome back</h2>
+
+
+					<p>Sign in to continue planning your perfect event.</p>
+
+				</div>
+
+
+
+				<!-- =========================================
+                 SPRING SECURITY ERROR
+            ========================================== -->
+
+				<div th:if="${param.error}" class="alert alert-danger">
+
+					<span class="alert-icon"> ! </span> <span> Invalid email or
+						password. Please check your details and try again. </span>
+
+				</div>
+
+
+
+				<!-- =========================================
+                 SPRING SECURITY LOGOUT
+            ========================================== -->
+
+				<div th:if="${param.logout}" class="alert alert-success">
+
+					<span class="alert-icon"> ✓ </span> <span> You have been
+						logged out successfully. </span>
+
+				</div>
+
+
+
+				<!-- =========================================
+                 LOGIN FORM
+            ========================================== -->
+
+	
+				<form th:action="@{/login}" method="post">
+
+					<!-- 1. EMAIL: Must be name="email" to match SecurityConfig's .usernameParameter("email") -->
+					<div class="form-group">
+						<div class="form-label-row">
+							<label for="email">Email address</label>
+						</div>
+						<div class="input-wrapper">
+							<input type="email" id="email" name="email"
+								placeholder="name@example.com" autocomplete="email" required>
+						</div>
+					</div>
+
+					<!-- 2. PASSWORD: Must be name="password" to match .passwordParameter("password") -->
+					<div class="form-group">
+						<div class="form-label-row">
+							<label for="password">Password</label>
+						</div>
+						<div class="input-wrapper">
+							<input type="password" id="password" name="password"
+								placeholder="Enter your password"
+								autocomplete="current-password" required>
+							<button type="button" class="password-toggle"
+								onclick="togglePassword()">Show</button>
+						</div>
+					</div>
+
+					<!-- 3. SUBMIT -->
+					<button type="submit" class="btn">Sign in to your account</button>
+
+				</form>
+
+				<!-- SIGN UP -->
+
+				<div class="signup">
+
+					Don't have an account? <a th:href="@{/showNewUserForm}"> Create
+						one </a>
+
+				</div>
+
+
+
+				<!-- SECURITY MESSAGE -->
+
+				<div class="secure-note">
+
+					<span class="secure-icon"> 🔒 </span> Your information is securely
+					protected.
+
+				</div>
+			</div>
+
+
+		</main>
+
+
+	</div>
+
+
+
+	<!-- =========================================
+     PASSWORD VISIBILITY SCRIPT
+========================================== -->
+
+	<script>
+		function togglePassword() {
+
+			const password = document.getElementById("password");
+
+			const toggle = document.querySelector(".password-toggle");
+
+			if (password.type === "password") {
+
+				password.type = "text";
+
+				toggle.textContent = "Hide";
+
+			} else {
+
+				password.type = "password";
+
+				toggle.textContent = "Show";
+
+			}
+
+		}
+	</script>
+
+
+</body>
+
+</html>
+

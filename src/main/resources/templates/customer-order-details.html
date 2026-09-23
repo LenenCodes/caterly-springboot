@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="'Booking #' + ${booking.id} + ' - Catering Hub'">
+        Booking Details
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --espresso: #211914;
+            --espresso-soft: #33261f;
+            --cream: #f7f3ed;
+            --cream-dark: #eee7dc;
+            --white: #ffffff;
+            --terracotta: #b65f3f;
+            --terracotta-dark: #984b31;
+            --gold: #c99a52;
+            --text: #29231f;
+            --muted: #7d746d;
+            --border: #e7ded3;
+            --green: #287a52;
+            --green-bg: #eaf5ee;
+            --amber: #9a6719;
+            --amber-bg: #fff5df;
+            --red: #a33d3d;
+            --red-bg: #fceeee;
+            --blue: #376b91;
+            --blue-bg: #edf5fa;
+            --shadow: 0 18px 50px rgba(40, 29, 21, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--text);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            height: 76px;
+            background: var(--espresso);
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar-brand {
+            color: #fff;
+            text-decoration: none;
+            font-family: "Playfair Display", serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .navbar-brand span {
+            color: #e5b56d;
+        }
+
+        .nav-back {
+            color: #e8ded5;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .nav-back:hover {
+            color: #fff;
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 42px 24px 70px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .booking-hero {
+            background: var(--espresso);
+            color: white;
+            border-radius: 24px;
+            padding: 34px 38px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .booking-hero::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            right: -120px;
+            top: -170px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .booking-hero::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            right: -70px;
+            bottom: -150px;
+            background: rgba(201, 154, 82, 0.08);
+        }
+
+        .hero-top {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .eyebrow {
+            color: #d8aa68;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .booking-hero h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.05;
+            margin: 0 0 10px;
+            letter-spacing: -1px;
+        }
+
+        .booking-date {
+            color: #cfc3b8;
+            font-size: 0.86rem;
+        }
+
+        /* =========================
+           STATUS BADGES
+        ========================= */
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .status-pending {
+            background: #493d26;
+            color: #f4cf86;
+        }
+
+        .status-accepted {
+            background: #203e4d;
+            color: #91d4f1;
+        }
+
+        .status-confirmed {
+            background: #1e4332;
+            color: #9ee0b9;
+        }
+
+        .status-rejected {
+            background: #4b2929;
+            color: #f4a5a5;
+        }
+
+        .status-cancelled {
+            background: #3b3937;
+            color: #d2cdca;
+        }
+
+        .status-completed {
+            background: #2c3d52;
+            color: #a9d4ff;
+        }
+
+        /* =========================
+           GRID
+        ========================= */
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 27px;
+            box-shadow: 0 8px 30px rgba(50, 38, 28, 0.045);
+        }
+
+        .card-label {
+            color: var(--terracotta);
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 17px;
+        }
+
+        .card-title {
+            margin: 0 0 5px;
+            font-family: "Playfair Display", serif;
+            font-size: 1.5rem;
+            color: var(--espresso);
+        }
+
+        .card-subtitle {
+            color: var(--muted);
+            font-size: 0.83rem;
+            margin-bottom: 21px;
+        }
+
+        /* =========================
+           EVENT DETAILS
+        ========================= */
+
+        .event-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .event-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .event-info small {
+            display: block;
+            color: var(--muted);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .event-info strong {
+            display: block;
+            font-size: 0.92rem;
+            color: var(--text);
+        }
+
+        /* =========================
+           CATERER
+        ========================= */
+
+        .partner-box {
+            background: var(--espresso);
+            border-radius: 16px;
+            padding: 21px;
+            color: white;
+        }
+
+        .partner-heading {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: #49352a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Playfair Display", serif;
+            font-size: 1.35rem;
+            color: #e5b56d;
+            font-weight: 700;
+        }
+
+        .partner-name {
+            font-family: "Playfair Display", serif;
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+
+        .partner-label {
+            color: #bcb0a6;
+            font-size: 0.73rem;
+        }
+
+        .partner-details {
+            display: grid;
+            gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .partner-detail {
+            display: flex;
+            gap: 9px;
+            color: #d7cec7;
+            font-size: 0.82rem;
+        }
+
+        /* =========================
+           SECTION CARD
+        ========================= */
+
+        .full-card {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-family: "Playfair Display", serif;
+            font-size: 1.55rem;
+            color: var(--espresso);
+        }
+
+        .section-header p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .item-count {
+            background: var(--cream);
+            color: var(--espresso-soft);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        /* =========================
+           DISH TABLE
+        ========================= */
+
+        .dish-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+        }
+
+        .dish-table thead th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #faf8f5;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dish-table tbody td {
+            padding: 17px 15px;
+            border-bottom: 1px solid #f0ebe5;
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+
+        .dish-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dish-number {
+            color: #aaa19a;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .dish-name {
+            font-weight: 700;
+            color: var(--espresso);
+        }
+
+        .dish-pill {
+            display: inline-flex;
+            padding: 6px 9px;
+            border-radius: 999px;
+            background: #f3eee8;
+            color: #75695f;
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .included {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .extra-charge {
+            color: var(--amber);
+            font-weight: 700;
+        }
+
+        /* =========================
+           PAYMENT
+        ========================= */
+
+        .payment-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .payment-timeline {
+            position: relative;
+            padding-left: 31px;
+        }
+
+        .payment-timeline::before {
+            content: "";
+            position: absolute;
+            left: 9px;
+            top: 16px;
+            bottom: 16px;
+            width: 1px;
+            background: var(--border);
+        }
+
+        .payment-step {
+            position: relative;
+            padding-bottom: 23px;
+        }
+
+        .payment-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -31px;
+            top: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--cream);
+            border: 4px solid var(--white);
+            box-shadow: 0 0 0 1px var(--border);
+            z-index: 2;
+        }
+
+        .timeline-dot.paid {
+            background: var(--green);
+            box-shadow: 0 0 0 1px var(--green);
+        }
+
+        .timeline-dot.pending {
+            background: var(--amber);
+            box-shadow: 0 0 0 1px var(--amber);
+        }
+
+        .payment-step-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .payment-step-title {
+            font-weight: 700;
+            color: var(--espresso);
+            font-size: 0.88rem;
+        }
+
+        .payment-state {
+            font-size: 0.66rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .payment-state.paid {
+            color: var(--green);
+        }
+
+        .payment-state.pending {
+            color: var(--amber);
+        }
+
+        .payment-amount {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 5px 0;
+            color: var(--espresso);
+        }
+
+        .payment-meta {
+            color: var(--muted);
+            font-size: 0.7rem;
+            line-height: 1.6;
+        }
+
+        .payment-meta code {
+            font-family: "DM Sans", sans-serif;
+            color: var(--espresso-soft);
+        }
+
+        /* =========================
+           BILLING
+        ========================= */
+
+        .billing-card {
+            background: #faf7f2;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 22px;
+        }
+
+        .billing-title {
+            font-family: "Playfair Display", serif;
+            font-size: 1.25rem;
+            color: var(--espresso);
+            margin-bottom: 17px;
+        }
+
+        .billing-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 8px 0;
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .billing-row strong {
+            color: var(--text);
+        }
+
+        .billing-divider {
+            border-top: 1px dashed #d8cec2;
+            margin: 8px 0;
+        }
+
+        .billing-grand-total {
+            margin-top: 12px;
+            padding-top: 16px;
+            border-top: 1px solid #d8cec2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .billing-grand-total span:first-child {
+            font-family: "Playfair Display", serif;
+            font-size: 1.15rem;
+            color: var(--espresso);
+        }
+
+        .grand-total-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--terracotta);
+        }
+
+        /* =========================
+           ACTIONS
+        ========================= */
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding-top: 4px;
+        }
+
+        .action-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            text-decoration: none;
+            padding: 12px 17px;
+            border-radius: 11px;
+            font-family: "DM Sans", sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: var(--white);
+            color: var(--espresso);
+            border: 1px solid var(--border);
+        }
+
+        .btn-pay-advance {
+            background: var(--green);
+            color: white;
+            box-shadow: 0 8px 20px rgba(40, 122, 82, 0.18);
+        }
+
+        .btn-pay-advance:hover {
+            background: #216b47;
+        }
+
+        .btn-pay-balance {
+            background: var(--terracotta);
+            color: white;
+            box-shadow: 0 8px 20px rgba(182, 95, 63, 0.18);
+        }
+
+        .btn-pay-balance:hover {
+            background: var(--terracotta-dark);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: var(--red);
+            border: 1px solid #e8b6b6;
+        }
+
+        .btn-cancel:hover {
+            background: var(--red-bg);
+        }
+
+        /* =========================
+           EMPTY DISH STATE
+        ========================= */
+
+        .empty-dishes {
+            padding: 35px 20px;
+            text-align: center;
+            color: var(--muted);
+            background: #faf8f5;
+            border-radius: 13px;
+            border: 1px dashed var(--border);
+        }
+
+        .empty-dishes-icon {
+            font-size: 1.8rem;
+            margin-bottom: 7px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+            .top-grid,
+            .payment-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-top {
+                flex-direction: column;
+            }
+
+            .booking-hero {
+                padding: 28px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .navbar {
+                padding: 0 18px;
+                height: 68px;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .nav-back {
+                font-size: 0.76rem;
+            }
+
+            .page {
+                padding: 24px 14px 50px;
+            }
+
+            .card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .booking-hero {
+                border-radius: 18px;
+                padding: 23px;
+            }
+
+            .booking-hero h1 {
+                font-size: 2rem;
+            }
+
+            .dish-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .section-header {
+                align-items: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-right {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <a th:href="@{/customer/dashboard}" class="navbar-brand">
+        🍽️ Cater <span>ly</span>
+    </a>
+
+    <a th:href="@{/customer/orders}" class="nav-back">
+        ← Back to My Orders
+    </a>
+
+</nav>
+
+
+<main class="page">
+
+    <!-- =========================
+         BOOKING HERO
+    ========================= -->
+
+    <section class="booking-hero">
+
+        <div class="hero-top">
+
+            <div>
+
+                <div class="eyebrow">
+                    Catering Hub · Booking
+                </div>
+
+                <h1 th:text="'Booking #' + ${booking.id}">
+                    Booking #1
+                </h1>
+
+                <div class="booking-date"
+                     th:text="'Placed on ' + ${#temporals.format(booking.createdAt, 'dd MMMM yyyy, hh:mm a')}">
+                    Placed on 31 August 2026, 07:15 PM
+                </div>
+
+            </div>
+
+            <div>
+
+                <span th:if="${booking.status.name() == 'PENDING'}"
+                      class="status-badge status-pending">
+                    ⧗ Pending Confirmation
+                </span>
+
+                <span th:if="${booking.status.name() == 'ACCEPTED'}"
+                      class="status-badge status-accepted">
+                    ✓ Accepted · Deposit Required
+                </span>
+
+                <span th:if="${booking.status.name() == 'CONFIRMED'}"
+                      class="status-badge status-confirmed">
+                    ✓ Confirmed & Locked
+                </span>
+
+                <span th:if="${booking.status.name() == 'REJECTED'}"
+                      class="status-badge status-rejected">
+                    ✕ Rejected
+                </span>
+
+                <span th:if="${booking.status.name() == 'CANCELLED'}"
+                      class="status-badge status-cancelled">
+                    Cancelled
+                </span>
+
+                <span th:if="${booking.status.name() == 'COMPLETED'}"
+                      class="status-badge status-completed">
+                    ★ Service Completed
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         EVENT + CATERER
+    ========================= -->
+
+    <section class="top-grid">
+
+        <!-- EVENT CARD -->
+
+        <div class="card">
+
+            <div class="card-label">
+                Your Event
+            </div>
+
+            <h2 class="card-title">
+                Event Details
+            </h2>
+
+            <div class="card-subtitle">
+                Everything scheduled for your catering service.
+            </div>
+
+            <div class="event-list">
+
+                <div class="event-item">
+
+                    <div class="event-icon">📅</div>
+
+                    <div class="event-info">
+                        <small>Event date</small>
+
+                        <strong th:text="${#temporals.format(booking.eventDate, 'dd MMMM yyyy')}">
+                            15 September 2026
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="event-item">
+
+                    <div class="event-icon">🕐</div>
+
+                    <div class="event-info">
+                        <small>Serving time</small>
+
+                        <strong th:text="${booking.eventTime}">
+                            19:30
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="event-item">
+
+                    <div class="event-icon">🍽️</div>
+
+                    <div class="event-info">
+                        <small>Plate package</small>
+
+                        <strong th:text="${booking.platePackage.packageName}">
+                            Grand Feast Veg Tray
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="event-item">
+
+                    <div class="event-icon">👥</div>
+
+                    <div class="event-info">
+                        <small>Guest plates</small>
+
+                        <strong th:text="${booking.guestPlateCount} + ' Plates'">
+                            150 Plates
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div class="event-item">
+
+                    <div class="event-icon">📍</div>
+
+                    <div class="event-info">
+                        <small>Venue</small>
+
+                        <strong th:text="${booking.venueAddress}">
+                            Grand Palace Banquet Hall, Marine Drive, Kochi
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CATERER CARD -->
+
+        <div class="card">
+
+            <div class="card-label">
+                Your Catering Partner
+            </div>
+
+            <div class="partner-box">
+
+                <div class="partner-heading">
+
+                    <div class="partner-avatar"
+                         th:text="${#strings.substring(booking.caterer.businessName, 0, 1).toUpperCase()}">
+                        R
+                    </div>
+
+                    <div>
+
+                        <div class="partner-name"
+                             th:text="${booking.caterer.businessName}">
+                            Royal Feast Caterers
+                        </div>
+
+                        <div class="partner-label">
+                            Catering Partner
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="partner-details">
+
+                    <div class="partner-detail">
+                        📞
+                        <span th:text="${booking.caterer.phone}">
+                            9876543210
+                        </span>
+                    </div>
+
+                    <div class="partner-detail">
+                        📍
+                        <span th:text="${booking.caterer.address}">
+                            Kochi, Kerala
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div th:if="${booking.specialNotes != null and !booking.specialNotes.isEmpty()}"
+                 style="margin-top:18px;">
+
+                <div class="card-label" style="margin-bottom:8px;">
+                    Special Instructions
+                </div>
+
+                <div style="
+                    background:#faf7f2;
+                    border:1px solid #e7ded3;
+                    border-radius:12px;
+                    padding:13px 15px;
+                    font-size:0.8rem;
+                    color:#625950;
+                    line-height:1.6;
+                    font-style:italic;
+                "
+                     th:text="${booking.specialNotes}">
+                    Less spicy starters
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DISH COMPOSITION
+    ========================= -->
+
+    <section class="card full-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Your Plate
+                </h2>
+
+                <p>
+                    The dishes included in your customized catering selection.
+                </p>
+
+            </div>
+
+            <div class="item-count">
+
+                <span th:text="${#lists.size(booking.selectedDishes)}">
+                    0
+                </span>
+
+                items
+
+            </div>
+
+        </div>
+
+
+        <div th:if="${booking.selectedDishes != null and !booking.selectedDishes.isEmpty()}">
+
+            <table class="dish-table">
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Dish</th>
+                        <th>Course</th>
+                        <th style="text-align:right;">
+                            Price Adjustment
+                        </th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr th:each="item, iterStat : ${booking.selectedDishes}">
+
+                        <td>
+                            <span class="dish-number"
+                                  th:text="${iterStat.count}">
+                                1
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="dish-name"
+                                  th:text="${item.dishNameSnapshot}">
+                                Paneer Butter Masala
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <span class="dish-pill"
+                                  th:text="${item.courseType}">
+                                MAIN COURSE
+                            </span>
+
+                        </td>
+
+                        <td style="text-align:right;">
+
+                            <span th:if="${item.extraCharge > 0}"
+                                  class="extra-charge"
+                                  th:text="'+ ₹' + ${item.extraCharge} + ' / plate'">
+                                + ₹20.00 / plate
+                            </span>
+
+                            <span th:if="${item.extraCharge == 0}"
+                                  class="included">
+                                ✓ Included
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div th:if="${booking.selectedDishes == null or booking.selectedDishes.isEmpty()}"
+             class="empty-dishes">
+
+            <div class="empty-dishes-icon">
+                🍽️
+            </div>
+
+            <strong>No dishes recorded</strong>
+
+            <div style="font-size:0.78rem; margin-top:5px;">
+                No customized dishes were saved for this booking.
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PAYMENT + BILLING
+    ========================= -->
+
+    <section class="card full-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Payment & Billing
+                </h2>
+
+                <p>
+                    Your payment progress and final booking calculation.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="payment-layout">
+
+
+            <!-- PAYMENT TIMELINE -->
+
+            <div>
+
+                <div class="card-label">
+                    Payment Timeline
+                </div>
+
+                <div class="payment-timeline">
+
+
+                    <!-- ADVANCE -->
+
+                    <div class="payment-step">
+
+                        <span th:class="${booking.advanceAmount != null ? 'timeline-dot paid' : 'timeline-dot pending'}">
+                        </span>
+
+                        <div class="payment-step-top">
+
+                            <span class="payment-step-title">
+                                Stage 1 · Advance Deposit
+                            </span>
+
+                            <span th:if="${booking.advanceAmount != null}"
+                                  class="payment-state paid">
+                                ✓ Paid
+                            </span>
+
+                            <span th:unless="${booking.advanceAmount != null}"
+                                  class="payment-state pending">
+                                Pending
+                            </span>
+
+                        </div>
+
+                        <div class="payment-amount"
+                             th:text="'₹' + ${#numbers.formatDecimal(booking.advanceAmount != null ? booking.advanceAmount : (booking.totalAmount * 0.25), 1, 2)}">
+                            ₹5,625.00
+                        </div>
+
+                        <div class="payment-meta">
+
+                            25% of total booking amount
+
+                            <br>
+
+                            Txn Ref:
+                            <code th:text="${booking.paymentId != null ? booking.paymentId : 'Awaiting Payment'}">
+                                TXN-12345
+                            </code>
+
+                            <br>
+
+                            Mode:
+                            <span th:text="${booking.paymentMethod != null ? booking.paymentMethod : 'N/A'}">
+                                UPI
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BALANCE -->
+
+                    <div class="payment-step">
+
+                        <span th:class="${booking.balanceAmount != null ? 'timeline-dot paid' : 'timeline-dot pending'}">
+                        </span>
+
+                        <div class="payment-step-top">
+
+                            <span class="payment-step-title">
+                                Stage 2 · Final Balance
+                            </span>
+
+                            <span th:if="${booking.balanceAmount != null}"
+                                  class="payment-state paid">
+                                ✓ Paid
+                            </span>
+
+                            <span th:unless="${booking.balanceAmount != null}"
+                                  class="payment-state pending">
+                                Pending
+                            </span>
+
+                        </div>
+
+                        <div class="payment-amount"
+                             th:style="${booking.balanceAmount != null ? 'color:#287a52;' : 'color:#9a6719;'}"
+                             th:text="'₹' + ${#numbers.formatDecimal(booking.balanceAmount != null ? booking.balanceAmount : booking.getRemainingBalance(), 1, 2)}">
+                            ₹16,875.00
+                        </div>
+
+                        <div class="payment-meta">
+
+                            75% remaining balance
+
+                            <br>
+
+                            Txn Ref:
+                            <code th:text="${booking.finalPaymentId != null ? booking.finalPaymentId : 'Awaiting Settlement'}">
+                                Pending
+                            </code>
+
+                            <br>
+
+                            Mode:
+                            <span th:text="${booking.finalPaymentMethod != null ? booking.finalPaymentMethod : 'N/A'}">
+                                N/A
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BILLING -->
+
+            <div>
+
+                <div class="card-label">
+                    Booking Calculation
+                </div>
+
+                <div class="billing-card">
+
+                    <div class="billing-title">
+                        Price Breakdown
+                    </div>
+
+
+                    <div class="billing-row">
+
+                        <span>
+                            Base package / plate
+                        </span>
+
+                        <strong th:text="'₹' + ${booking.platePackage.basePricePerPlate}">
+                            ₹450.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="billing-row">
+
+                        <span>
+                            Customized price / plate
+                        </span>
+
+                        <strong th:text="'₹' + ${booking.finalPricePerPlate}">
+                            ₹470.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="billing-row">
+
+                        <span>
+                            Plate count
+                        </span>
+
+                        <strong th:text="'× ' + ${booking.guestPlateCount}">
+                            × 150
+                        </strong>
+
+                    </div>
+
+
+                    <div class="billing-divider"></div>
+
+
+                    <div class="billing-row">
+
+                        <span>
+                            Advance paid
+                        </span>
+
+                        <strong style="color:#287a52;"
+                                th:text="'- ₹' + ${#numbers.formatDecimal(booking.advanceAmount != null ? booking.advanceAmount : 0, 1, 2)}">
+                            - ₹0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="billing-row">
+
+                        <span>
+                            Remaining amount
+                        </span>
+
+                        <strong th:style="${booking.getRemainingBalance() > 0 ? 'color:#a33d3d;' : 'color:#287a52;'}"
+                                th:text="'₹' + ${#numbers.formatDecimal(booking.getRemainingBalance(), 1, 2)}">
+                            ₹0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="billing-grand-total">
+
+                        <span>
+                            Total booking bill
+                        </span>
+
+                        <span class="grand-total-value"
+                              th:text="'₹' + ${#numbers.formatDecimal(booking.totalAmount, 1, 'COMMA', 2, 'POINT')}">
+                            ₹70,500.00
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         ACTIONS
+    ========================= -->
+
+    <section class="actions">
+
+        <a th:href="@{/customer/orders}"
+           class="btn btn-back">
+            ← Back to My Orders
+        </a>
+
+
+        <div class="action-right">
+
+
+            <!-- PAY ADVANCE -->
+
+            <a th:if="${booking.status.name() == 'ACCEPTED' and (booking.paymentStatus == null or booking.paymentStatus == 'UNPAID')}"
+               th:href="@{/customer/orders/{id}/payment(id=${booking.id}, type='ADVANCE')}"
+               class="btn btn-pay-advance">
+
+                💳 Pay 25% Advance
+
+            </a>
+
+
+            <!-- PAY BALANCE -->
+
+            <a th:if="${(booking.status.name() == 'CONFIRMED' or booking.status.name() == 'COMPLETED') and booking.paymentStatus == 'ADVANCE_PAID'}"
+               th:href="@{/customer/orders/{id}/payment(id=${booking.id}, type='BALANCE')}"
+               class="btn btn-pay-balance">
+
+                💳 Pay Remaining Balance
+
+            </a>
+
+
+            <!-- CANCEL -->
+
+            <form th:if="${booking.status.name() == 'PENDING' or booking.status.name() == 'ACCEPTED' or booking.status.name() == 'CONFIRMED'}"
+                  th:action="@{/customer/orders/{id}/cancel(id=${booking.id})}"
+                  method="post"
+                  onsubmit="return handleCancelPrompt(this);"
+                  style="margin:0;">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
+
+                <input type="hidden"
+                       name="reason"
+                       value="" />
+
+                <button type="submit"
+                        class="btn btn-cancel">
+
+                    ✕ Cancel Booking
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    function handleCancelPrompt(form) {
+
+        const confirmed = confirm(
+            "Are you sure you want to cancel this booking? This will immediately free up the reserved date."
+        );
+
+        if (!confirmed) {
+            return false;
+        }
+
+        const reason = prompt(
+            "Optional: Please provide a cancellation reason for the caterer:"
+        );
+
+        form.querySelector('input[name="reason"]').value =
+            reason ? reason.trim() : "";
+
+        return true;
+    }
+
+</script>
+
+</body>
+</html>

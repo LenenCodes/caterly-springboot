@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${paymentType == 'BALANCE'
+        ? 'Settle Final Balance - Catering Hub'
+        : 'Secure Advance Checkout - Catering Hub'}">
+        Payment Checkout
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --espresso: #241813;
+            --espresso-soft: #34231d;
+            --cream: #f8f3eb;
+            --cream-dark: #eee5d8;
+            --white: #ffffff;
+            --terracotta: #b85c38;
+            --terracotta-dark: #99472a;
+            --gold: #c69a55;
+            --text: #29211d;
+            --muted: #766b64;
+            --border: #e5dbcf;
+            --green: #26734d;
+            --green-soft: #eaf5ee;
+            --amber: #9a6817;
+            --amber-soft: #fbf1d9;
+            --blue: #315d86;
+            --blue-soft: #eaf1f8;
+            --shadow: 0 18px 45px rgba(55, 38, 26, 0.09);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "DM Sans", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 8% 5%, rgba(198, 154, 85, 0.10), transparent 25%),
+                radial-gradient(circle at 92% 20%, rgba(184, 92, 56, 0.07), transparent 27%),
+                var(--cream);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            height: 74px;
+            background: rgba(36, 24, 19, 0.97);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-weight: 700;
+            font-size: 1.08rem;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-icon {
+            width: 37px;
+            height: 37px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: rgba(198, 154, 85, 0.14);
+            border: 1px solid rgba(198, 154, 85, 0.25);
+            font-size: 1.05rem;
+        }
+
+        .exit-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 10px;
+            color: #d8cec7;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .exit-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 52px 24px 70px;
+        }
+
+        .page-heading {
+            margin-bottom: 30px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            font-weight: 700;
+            color: var(--terracotta);
+            margin-bottom: 9px;
+        }
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+
+        .page-heading h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.1;
+            margin: 0 0 9px;
+            letter-spacing: -0.035em;
+            color: var(--espresso);
+        }
+
+        .page-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+            max-width: 650px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .payment-card {
+            padding: 30px;
+        }
+
+        .summary-card {
+            padding: 27px;
+            position: sticky;
+            top: 98px;
+        }
+
+        /* =========================
+           PAYMENT HEADER
+        ========================= */
+
+        .payment-stage {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stage-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stage-icon {
+            width: 48px;
+            height: 48px;
+            flex: 0 0 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            font-size: 1.25rem;
+        }
+
+        .stage-icon.advance {
+            background: var(--amber-soft);
+            color: var(--amber);
+        }
+
+        .stage-icon.balance {
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .stage-title {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .stage-description {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .stage-pill {
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            white-space: nowrap;
+        }
+
+        .stage-pill.advance {
+            color: var(--amber);
+            background: var(--amber-soft);
+        }
+
+        .stage-pill.balance {
+            color: var(--blue);
+            background: var(--blue-soft);
+        }
+
+        /* =========================
+           PAYMENT METHODS
+        ========================= */
+
+        .section-label {
+            margin: 0 0 6px;
+            font-size: 1.02rem;
+            font-weight: 700;
+        }
+
+        .section-helper {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 0.83rem;
+            line-height: 1.55;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 12px;
+        }
+
+        .pay-option {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            cursor: pointer;
+            background: #fff;
+            transition: 0.2s ease;
+        }
+
+        .pay-option:hover {
+            border-color: rgba(184, 92, 56, 0.55);
+            background: #fffaf6;
+            transform: translateY(-1px);
+        }
+
+        .pay-option:has(input:checked) {
+            border-color: var(--terracotta);
+            background: #fff8f3;
+            box-shadow: 0 0 0 3px rgba(184, 92, 56, 0.08);
+        }
+
+        .pay-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--terracotta);
+            flex: 0 0 auto;
+        }
+
+        .method-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: var(--cream);
+            font-size: 1.1rem;
+            flex: 0 0 42px;
+        }
+
+        .method-content {
+            min-width: 0;
+        }
+
+        .method-name {
+            display: block;
+            font-size: 0.93rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .method-description {
+            display: block;
+            color: var(--muted);
+            font-size: 0.78rem;
+        }
+
+        .method-arrow {
+            margin-left: auto;
+            color: #b4aaa3;
+            font-size: 1rem;
+        }
+
+        /* =========================
+           DEMO NOTICE
+        ========================= */
+
+        .demo-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            background: #f8f4ef;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.77rem;
+            line-height: 1.5;
+        }
+
+        .demo-notice strong {
+            color: var(--text);
+        }
+
+        .notice-icon {
+            flex: 0 0 auto;
+        }
+
+        /* =========================
+           PAY BUTTON
+        ========================= */
+
+        .btn-pay {
+            width: 100%;
+            margin-top: 22px;
+            padding: 15px 18px;
+            border: 0;
+            border-radius: 13px;
+            background: var(--terracotta);
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.94rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(184, 92, 56, 0.22);
+            transition: 0.2s ease;
+        }
+
+        .btn-pay:hover {
+            background: var(--terracotta-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 13px 27px rgba(184, 92, 56, 0.28);
+        }
+
+        .btn-pay:active {
+            transform: translateY(0);
+        }
+
+        .secure-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            color: #8b817b;
+            font-size: 0.72rem;
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .summary-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .summary-heading-icon {
+            width: 37px;
+            height: 37px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--cream);
+            font-size: 1rem;
+        }
+
+        .summary-heading h2 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .summary-heading p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-size: 0.72rem;
+        }
+
+        .booking-ref {
+            padding: 12px 14px;
+            background: var(--espresso);
+            color: #fff;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .booking-ref span:first-child {
+            color: #bfb2aa;
+            font-size: 0.73rem;
+        }
+
+        .booking-ref strong {
+            font-size: 0.84rem;
+        }
+
+        .financials {
+            display: grid;
+            gap: 13px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            font-size: 0.84rem;
+        }
+
+        .summary-label {
+            color: var(--muted);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .paid-value {
+            color: var(--green);
+        }
+
+        .divider {
+            border: 0;
+            border-top: 1px dashed var(--border);
+            margin: 18px 0;
+        }
+
+        .payable-box {
+            padding: 17px;
+            border-radius: 14px;
+            background: var(--green-soft);
+            border: 1px solid rgba(38, 115, 77, 0.14);
+        }
+
+        .payable-label {
+            display: block;
+            color: #53705f;
+            font-size: 0.76rem;
+            margin-bottom: 5px;
+        }
+
+        .payable-amount {
+            display: block;
+            color: var(--green);
+            font-size: 1.48rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .payable-note {
+            margin: 7px 0 0;
+            color: #61776a;
+            font-size: 0.7rem;
+            line-height: 1.45;
+        }
+
+        /* =========================
+           BALANCE INFO
+        ========================= */
+
+        .balance-info {
+            margin-top: 17px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            background: var(--blue-soft);
+            color: #4b6178;
+            font-size: 0.74rem;
+            line-height: 1.5;
+        }
+
+        .balance-info strong {
+            color: var(--blue);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer-note {
+            text-align: center;
+            color: #938881;
+            font-size: 0.72rem;
+            margin-top: 25px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                height: 68px;
+                padding: 0 18px;
+            }
+
+            .brand {
+                font-size: 0.96rem;
+            }
+
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .exit-link {
+                font-size: 0.78rem;
+                padding: 8px;
+            }
+
+            .page {
+                padding: 32px 15px 50px;
+            }
+
+            .payment-card,
+            .summary-card {
+                padding: 21px;
+                border-radius: 17px;
+            }
+
+            .payment-stage {
+                align-items: flex-start;
+            }
+
+            .stage-pill {
+                display: none;
+            }
+
+            .stage-icon {
+                width: 43px;
+                height: 43px;
+                flex-basis: 43px;
+            }
+
+            .pay-option {
+                padding: 14px;
+            }
+
+            .method-description {
+                line-height: 1.4;
+            }
+
+            .summary-line {
+                font-size: 0.81rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <a th:href="@{/customer/orders}" class="brand">
+        <span class="brand-icon">🍽️</span>
+        <span>Caterly</span>
+    </a>
+
+    <a th:href="@{/customer/orders}" class="exit-link">
+        <span>←</span>
+        <span>Cancel &amp; Exit</span>
+    </a>
+
+</nav>
+
+
+<main class="page">
+
+    <!-- =========================
+         PAGE INTRO
+    ========================= -->
+
+    <section class="page-heading">
+
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Secure Checkout
+        </div>
+
+        <h1
+            th:text="${paymentType == 'BALANCE'
+                ? 'Settle your final balance'
+                : 'Secure your advance payment'}">
+            Secure your payment
+        </h1>
+
+        <p
+            th:text="${paymentType == 'BALANCE'
+                ? 'Complete the remaining payment for your confirmed catering booking.'
+                : 'Lock your confirmed catering slot with the required 25% advance deposit.'}">
+            Complete your catering payment securely.
+        </p>
+
+    </section>
+
+
+    <div class="checkout-grid">
+
+        <!-- =========================
+             PAYMENT METHOD CARD
+        ========================= -->
+
+        <section class="card payment-card">
+
+            <div class="payment-stage">
+
+                <div class="stage-left">
+
+                    <div
+                        class="stage-icon"
+                        th:classappend="${paymentType == 'BALANCE' ? ' balance' : ' advance'}">
+
+                        <span th:if="${paymentType == 'BALANCE'}">✓</span>
+                        <span th:unless="${paymentType == 'BALANCE'}">₹</span>
+
+                    </div>
+
+                    <div>
+
+                        <h2 class="stage-title"
+                            th:text="${paymentType == 'BALANCE'
+                                ? 'Stage 2 · Final Balance'
+                                : 'Stage 1 · Advance Deposit'}">
+                            Stage 1 · Advance Deposit
+                        </h2>
+
+                        <p class="stage-description"
+                           th:text="${paymentType == 'BALANCE'
+                                ? 'Settle the remaining amount before your event.'
+                                : 'Pay 25% to secure your caterer and event slot.'}">
+                            Pay your required booking amount.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span
+                    class="stage-pill"
+                    th:classappend="${paymentType == 'BALANCE' ? ' balance' : ' advance'}"
+                    th:text="${paymentType == 'BALANCE' ? 'Final Payment' : '25% Deposit'}">
+                    25% Deposit
+                </span>
+
+            </div>
+
+
+            <h3 class="section-label">
+                Choose your payment method
+            </h3>
+
+            <p class="section-helper">
+                Select how you would like to complete this payment.
+                Your booking amount is calculated automatically.
+            </p>
+
+
+            <form
+                th:action="@{/customer/orders/{id}/pay(id=${booking.id})}"
+                method="post">
+
+                <!-- CSRF -->
+                <input
+                    type="hidden"
+                    th:name="${_csrf.parameterName}"
+                    th:value="${_csrf.token}" />
+
+                <!-- Payment information -->
+                <input
+                    type="hidden"
+                    name="amountPaid"
+                    th:value="${payableAmount}" />
+
+                <input
+                    type="hidden"
+                    name="paymentType"
+                    th:value="${paymentType}" />
+
+
+                <div class="payment-methods">
+
+                    <!-- UPI -->
+
+                    <label class="pay-option">
+
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="UPI"
+                            checked />
+
+                        <span class="method-icon">
+                            📱
+                        </span>
+
+                        <span class="method-content">
+
+                            <span class="method-name">
+                                UPI / Instant QR
+                            </span>
+
+                            <span class="method-description">
+                                Google Pay, PhonePe, Paytm, BHIM
+                            </span>
+
+                        </span>
+
+                        <span class="method-arrow">
+                            ›
+                        </span>
+
+                    </label>
+
+
+                    <!-- CARD -->
+
+                    <label class="pay-option">
+
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="CARD" />
+
+                        <span class="method-icon">
+                            💳
+                        </span>
+
+                        <span class="method-content">
+
+                            <span class="method-name">
+                                Credit / Debit Card
+                            </span>
+
+                            <span class="method-description">
+                                Visa, MasterCard, RuPay
+                            </span>
+
+                        </span>
+
+                        <span class="method-arrow">
+                            ›
+                        </span>
+
+                    </label>
+
+
+                    <!-- NET BANKING -->
+
+                    <label class="pay-option">
+
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="NETBANKING" />
+
+                        <span class="method-icon">
+                            🏦
+                        </span>
+
+                        <span class="method-content">
+
+                            <span class="method-name">
+                                Net Banking
+                            </span>
+
+                            <span class="method-description">
+                                All major Indian scheduled banks
+                            </span>
+
+                        </span>
+
+                        <span class="method-arrow">
+                            ›
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <!-- Demo Notice -->
+
+                <div class="demo-notice">
+
+                    <span class="notice-icon">🧪</span>
+
+                    <div>
+                        <strong>Demo Payment Sandbox</strong><br>
+                        This is a simulated checkout. Payment confirmation is immediate and no real money is charged.
+                    </div>
+
+                </div>
+
+
+                <!-- Pay Button -->
+
+                <button
+                    type="submit"
+                    class="btn-pay"
+                    th:text="${paymentType == 'BALANCE'
+                        ? 'Pay Remaining Balance ₹' + #numbers.formatDecimal(payableAmount, 1, 2)
+                        : 'Pay Advance Deposit ₹' + #numbers.formatDecimal(payableAmount, 1, 2)}">
+
+                    Pay Now
+
+                </button>
+
+
+                <div class="secure-line">
+                    <span>🔒</span>
+                    <span>Secure mock checkout · Your booking details stay protected</span>
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================
+             BOOKING SUMMARY
+        ========================= -->
+
+        <aside class="card summary-card">
+
+            <div class="summary-heading">
+
+                <div class="summary-heading-icon">
+                    🧾
+                </div>
+
+                <div>
+                    <h2>Booking Summary</h2>
+                    <p>Financial overview</p>
+                </div>
+
+            </div>
+
+
+            <!-- Booking Reference -->
+
+            <div class="booking-ref">
+
+                <span>Booking Reference</span>
+
+                <strong th:text="'#' + ${booking.id}">
+                    #1
+                </strong>
+
+            </div>
+
+
+            <div class="financials">
+
+                <!-- Caterer -->
+
+                <div class="summary-line">
+
+                    <span class="summary-label">
+                        Caterer
+                    </span>
+
+                    <span
+                        class="summary-value"
+                        th:text="${booking.caterer.businessName}">
+                        Royal Feast
+                    </span>
+
+                </div>
+
+
+                <!-- Event Date -->
+
+                <div class="summary-line">
+
+                    <span class="summary-label">
+                        Event Date
+                    </span>
+
+                    <span
+                        class="summary-value"
+                        th:text="${#temporals.format(booking.eventDate, 'dd MMM yyyy')}">
+                        10 Oct 2026
+                    </span>
+
+                </div>
+
+
+                <!-- Plates -->
+
+                <div class="summary-line">
+
+                    <span class="summary-label">
+                        Plates
+                    </span>
+
+                    <span
+                        class="summary-value"
+                        th:text="${booking.guestPlateCount} + ' plates'">
+                        50 plates
+                    </span>
+
+                </div>
+
+
+                <!-- Total Bill -->
+
+                <div class="summary-line">
+
+                    <span class="summary-label">
+                        Total Bill
+                    </span>
+
+                    <span
+                        class="summary-value"
+                        th:text="'₹' + ${#numbers.formatDecimal(booking.totalAmount, 1, 2)}">
+                        ₹22,500.00
+                    </span>
+
+                </div>
+
+
+                <!-- Previous Advance -->
+
+                <div
+                    class="summary-line"
+                    th:if="${paymentType == 'BALANCE' and booking.advanceAmount != null}">
+
+                    <span class="summary-label">
+                        Advance Paid
+                    </span>
+
+                    <span
+                        class="summary-value paid-value"
+                        th:text="'- ₹' + ${#numbers.formatDecimal(booking.advanceAmount, 1, 2)}">
+                        - ₹5,625.00
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <hr class="divider">
+
+
+            <!-- Payable Amount -->
+
+            <div class="payable-box">
+
+                <span
+                    class="payable-label"
+                    th:text="${paymentType == 'BALANCE'
+                        ? 'Balance Payable'
+                        : 'Advance Payable · 25%'}">
+                    Advance Payable · 25%
+                </span>
+
+                <span
+                    class="payable-amount"
+                    th:text="'₹' + ${#numbers.formatDecimal(payableAmount, 1, 2)}">
+                    ₹5,625.00
+                </span>
+
+                <p
+                    class="payable-note"
+                    th:text="${paymentType == 'BALANCE'
+                        ? 'This settles the remaining amount on your catering booking.'
+                        : 'This deposit locks your confirmed catering slot.'}">
+                    This deposit locks your confirmed catering slot.
+                </p>
+
+            </div>
+
+
+            <!-- Balance Context -->
+
+            <div
+                class="balance-info"
+                th:if="${paymentType == 'BALANCE'}">
+
+                <strong>Final settlement</strong><br>
+                Your advance payment has already been deducted from the total booking value.
+
+            </div>
+
+
+            <p class="footer-note">
+                🔐 Payment status is updated immediately after this demo transaction.
+            </p>
+
+        </aside>
+
+    </div>
+
+</main>
+
+</body>
+</html>

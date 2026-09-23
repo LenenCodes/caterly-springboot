@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Customer Directory | Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --espresso: #241b17;
+        --espresso-soft: #352923;
+
+        --cream: #f7f4ee;
+        --white: #ffffff;
+
+        --terracotta: #b85c38;
+        --terracotta-soft: #fbf0eb;
+
+        --gold: #c69a4b;
+
+        --border: #e7e0d8;
+        --border-soft: #eee9e3;
+
+        --text: #2c2521;
+        --muted: #81776f;
+        --muted-light: #a39a93;
+
+        --green: #28754b;
+        --green-bg: #edf8f1;
+
+        --amber: #92400e;
+        --amber-bg: #fff5dc;
+
+        --red: #ad4038;
+        --red-bg: #fff0ee;
+
+        --shadow: 0 12px 35px rgba(36, 27, 23, 0.06);
+    }
+
+
+    body {
+        min-height: 100vh;
+
+        background:
+            radial-gradient(
+                circle at 88% 5%,
+                rgba(184, 92, 56, 0.07),
+                transparent 26%
+            ),
+            var(--cream);
+
+        font-family: "DM Sans", sans-serif;
+
+        color: var(--text);
+    }
+
+
+    /* =========================
+       TOP BAR
+    ========================== */
+
+    .topbar {
+        height: 72px;
+
+        background: var(--espresso);
+
+        color: var(--white);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 6%;
+
+        box-shadow:
+            0 3px 20px rgba(0, 0, 0, 0.12);
+    }
+
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+
+    .brand-mark {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 11px;
+
+        background: var(--terracotta);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+
+    .brand-name {
+        font-family: "Playfair Display", serif;
+
+        font-size: 1.25rem;
+
+        letter-spacing: 0.2px;
+    }
+
+
+    .admin-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        color: #d9d0ca;
+
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+
+    .admin-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #78c99a;
+
+        box-shadow:
+            0 0 0 4px rgba(120, 201, 154, 0.12);
+    }
+
+
+    /* =========================
+       PAGE
+    ========================== */
+
+    .page {
+        width: min(1220px, calc(100% - 40px));
+
+        margin: 0 auto;
+
+        padding: 44px 0 70px;
+    }
+
+
+    /* =========================
+       BREADCRUMB
+    ========================== */
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+
+        color: var(--muted);
+
+        font-size: 0.76rem;
+
+        margin-bottom: 18px;
+    }
+
+
+    .breadcrumb span {
+        color: var(--muted-light);
+    }
+
+
+    .breadcrumb a {
+        color: var(--terracotta);
+
+        text-decoration: none;
+
+        font-weight: 600;
+    }
+
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================== */
+
+    .page-header {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: flex-end;
+
+        gap: 30px;
+
+        margin-bottom: 28px;
+    }
+
+
+    .eyebrow {
+        color: var(--terracotta);
+
+        font-size: 0.72rem;
+
+        font-weight: 700;
+
+        letter-spacing: 1.5px;
+
+        text-transform: uppercase;
+
+        margin-bottom: 8px;
+    }
+
+
+    .page-header h1 {
+        font-family: "Playfair Display", serif;
+
+        color: var(--espresso);
+
+        font-size: clamp(2rem, 4vw, 2.75rem);
+
+        line-height: 1.1;
+
+        margin-bottom: 9px;
+    }
+
+
+    .page-header p {
+        color: var(--muted);
+
+        font-size: 0.88rem;
+
+        line-height: 1.65;
+
+        max-width: 620px;
+    }
+
+
+    .back-link {
+        flex-shrink: 0;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 11px 16px;
+
+        border: 1px solid var(--border);
+
+        background: var(--white);
+
+        color: var(--espresso);
+
+        border-radius: 10px;
+
+        text-decoration: none;
+
+        font-size: 0.81rem;
+
+        font-weight: 700;
+
+        transition: 0.2s ease;
+    }
+
+
+    .back-link:hover {
+        color: var(--terracotta);
+
+        border-color: var(--terracotta);
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================
+       ALERTS
+    ========================== */
+
+    .alert {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+
+        padding: 13px 16px;
+
+        border-radius: 11px;
+
+        margin-bottom: 18px;
+
+        font-size: 0.83rem;
+
+        font-weight: 600;
+    }
+
+
+    .alert-icon {
+        width: 27px;
+        height: 27px;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+    }
+
+
+    .alert-success {
+        background: var(--green-bg);
+
+        color: var(--green);
+
+        border: 1px solid #d4ebdc;
+    }
+
+
+    .alert-success .alert-icon {
+        background: #d8efdf;
+    }
+
+
+    .alert-danger {
+        background: var(--red-bg);
+
+        color: var(--red);
+
+        border: 1px solid #f0d5d2;
+    }
+
+
+    .alert-danger .alert-icon {
+        background: #f6dcd9;
+    }
+
+
+    /* =========================
+       DIRECTORY CARD
+    ========================== */
+
+    .directory-card {
+        background: var(--white);
+
+        border: 1px solid var(--border);
+
+        border-radius: 18px;
+
+        box-shadow: var(--shadow);
+
+        overflow: hidden;
+    }
+
+
+    /* =========================
+       CARD TOOLBAR
+    ========================== */
+
+    .directory-toolbar {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        padding: 21px 24px;
+
+        border-bottom: 1px solid var(--border);
+
+        background: #fffdfa;
+    }
+
+
+    .toolbar-title {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+
+    .toolbar-icon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 10px;
+
+        background: var(--terracotta-soft);
+
+        color: var(--terracotta);
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1rem;
+    }
+
+
+    .toolbar-title h2 {
+        color: var(--espresso);
+
+        font-size: 0.9rem;
+
+        margin-bottom: 3px;
+    }
+
+
+    .toolbar-title p {
+        color: var(--muted);
+
+        font-size: 0.7rem;
+    }
+
+
+    .customer-count {
+        display: inline-flex;
+
+        align-items: center;
+
+        padding: 6px 11px;
+
+        border-radius: 999px;
+
+        background: #f3eee8;
+
+        color: var(--espresso);
+
+        font-size: 0.7rem;
+
+        font-weight: 700;
+    }
+
+
+    /* =========================
+       TABLE WRAPPER
+    ========================== */
+
+    .table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+    }
+
+
+    table {
+        width: 100%;
+
+        min-width: 900px;
+
+        border-collapse: collapse;
+    }
+
+
+    /* =========================
+       TABLE HEADER
+    ========================== */
+
+    th {
+        padding: 13px 20px;
+
+        background: #fbf9f6;
+
+        border-bottom: 1px solid var(--border);
+
+        color: #91877f;
+
+        font-size: 0.67rem;
+
+        font-weight: 700;
+
+        letter-spacing: 0.7px;
+
+        text-transform: uppercase;
+
+        text-align: left;
+
+        white-space: nowrap;
+    }
+
+
+    th:last-child {
+        text-align: right;
+    }
+
+
+    /* =========================
+       TABLE BODY
+    ========================== */
+
+    td {
+        padding: 16px 20px;
+
+        border-bottom: 1px solid var(--border-soft);
+
+        font-size: 0.82rem;
+
+        vertical-align: middle;
+    }
+
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    tbody tr {
+        transition: background 0.18s ease;
+    }
+
+
+    tbody tr:hover {
+        background: #fdfbf8;
+    }
+
+
+    /* =========================
+       CUSTOMER
+    ========================== */
+
+    .customer-cell {
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+    }
+
+
+    .customer-avatar {
+        width: 38px;
+        height: 38px;
+
+        flex-shrink: 0;
+
+        border-radius: 12px;
+
+        background: var(--espresso);
+
+        color: var(--white);
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        font-family: "Playfair Display", serif;
+
+        font-size: 0.9rem;
+    }
+
+
+    .customer-info {
+        min-width: 0;
+    }
+
+
+    .customer-name {
+        display: block;
+
+        color: var(--espresso);
+
+        font-size: 0.82rem;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        max-width: 175px;
+    }
+
+
+    .customer-id {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--muted-light);
+
+        font-size: 0.65rem;
+    }
+
+
+    /* =========================
+       EMAIL
+    ========================== */
+
+    .email {
+        color: var(--text);
+
+        font-size: 0.79rem;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================
+       PHONE
+    ========================== */
+
+    .phone {
+        color: var(--text);
+
+        white-space: nowrap;
+
+        font-size: 0.79rem;
+    }
+
+
+    /* =========================
+       ADDRESS
+    ========================== */
+
+    .address {
+        display: block;
+
+        max-width: 220px;
+
+        color: var(--muted);
+
+        line-height: 1.45;
+
+        white-space: normal;
+    }
+
+
+    /* =========================
+       STATUS
+    ========================== */
+
+    .badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        padding: 6px 10px;
+
+        border-radius: 999px;
+
+        font-size: 0.67rem;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .badge::before {
+        content: "";
+
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    .badge-active {
+        background: var(--green-bg);
+
+        color: var(--green);
+    }
+
+
+    .badge-suspended {
+        background: var(--red-bg);
+
+        color: var(--red);
+    }
+
+
+    /* =========================
+       ACTIONS
+    ========================== */
+
+    .actions {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-end;
+
+        gap: 7px;
+    }
+
+
+    .action-form {
+        margin: 0;
+    }
+
+
+    .btn {
+        min-height: 34px;
+
+        padding: 7px 11px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        font-family: inherit;
+
+        font-size: 0.69rem;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        text-decoration: none;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        white-space: nowrap;
+
+        transition:
+            background 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+
+    .btn-edit {
+        background: #f1ebe4;
+
+        color: var(--espresso);
+    }
+
+
+    .btn-edit:hover {
+        background: var(--terracotta-soft);
+
+        color: var(--terracotta);
+    }
+
+
+    .btn-toggle {
+        background: var(--amber-bg);
+
+        color: var(--amber);
+    }
+
+
+    .btn-toggle:hover {
+        background: #fce9b4;
+    }
+
+
+    .btn-delete {
+        background: var(--red-bg);
+
+        color: var(--red);
+    }
+
+
+    .btn-delete:hover {
+        background: #f9dedb;
+    }
+
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-state {
+        padding: 65px 25px;
+
+        text-align: center;
+    }
+
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+
+        margin: 0 auto 16px;
+
+        border-radius: 17px;
+
+        background: #f4eee8;
+
+        color: var(--terracotta);
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1.25rem;
+    }
+
+
+    .empty-state h3 {
+        font-family: "Playfair Display", serif;
+
+        color: var(--espresso);
+
+        font-size: 1.2rem;
+
+        margin-bottom: 6px;
+    }
+
+
+    .empty-state p {
+        color: var(--muted);
+
+        font-size: 0.79rem;
+    }
+
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    .directory-footer {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 15px 24px;
+
+        border-top: 1px solid var(--border);
+
+        background: #fffdfa;
+
+        color: var(--muted-light);
+
+        font-size: 0.68rem;
+    }
+
+
+    .directory-footer strong {
+        color: var(--muted);
+
+        font-weight: 700;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 700px) {
+
+        .topbar {
+            padding: 0 20px;
+        }
+
+
+        .admin-badge {
+            display: none;
+        }
+
+
+        .page {
+            width: min(100% - 28px, 1220px);
+
+            padding-top: 30px;
+        }
+
+
+        .page-header {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 18px;
+        }
+
+
+        .back-link {
+            width: 100%;
+        }
+
+
+        .directory-toolbar {
+            padding: 18px;
+        }
+
+
+        .directory-footer {
+            padding: 14px 18px;
+        }
+
+    }
+
+
+    @media (max-width: 430px) {
+
+        .brand-name {
+            font-size: 1.08rem;
+        }
+
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+        }
+
+
+        .page-header h1 {
+            font-size: 2rem;
+        }
+
+
+        .customer-count {
+            display: none;
+        }
+
+    }
+
+</style>
+
+
+</head>
+
+<body>
+
+<!-- =========================
+     TOP BAR
+========================== -->
+
+<header class="topbar">
+
+
+<div class="brand">
+
+    <div class="brand-mark">
+        C
+    </div>
+
+    <div class="brand-name">
+        Caterly
+    </div>
+
+</div>
+
+
+<div class="admin-badge">
+
+    <span class="admin-dot"></span>
+
+    Administrator
+
+</div>
+```
+
+</header>
+
+<!-- =========================
+     PAGE
+========================== -->
+
+<main class="page">
+
+
+<!-- BREADCRUMB -->
+
+<div class="breadcrumb">
+
+    <a th:href="@{/admin/dashboard}">
+        Admin Dashboard
+    </a>
+
+    <span>›</span>
+
+    <span>Customer Directory</span>
+
+</div>
+
+
+
+<!-- PAGE HEADER -->
+
+<div class="page-header">
+
+    <div>
+
+        <div class="eyebrow">
+            Customer Management
+        </div>
+
+
+        <h1>
+            Registered Customers
+        </h1>
+
+
+        <p>
+            Monitor customer accounts, review their saved information,
+            and manage account access from one central workspace.
+        </p>
+
+    </div>
+
+
+    <a
+        th:href="@{/admin/dashboard}"
+        class="back-link">
+
+        <span>←</span>
+
+        Back to Dashboard
+
+    </a>
+
+</div>
+
+
+
+<!-- SUCCESS ALERT -->
+
+<div
+    th:if="${successMessage}"
+    class="alert alert-success">
+
+    <div class="alert-icon">
+        ✓
+    </div>
+
+    <div th:text="${successMessage}">
+        Customer updated successfully.
+    </div>
+
+</div>
+
+
+
+<!-- ERROR ALERT -->
+
+<div
+    th:if="${errorMessage}"
+    class="alert alert-danger">
+
+    <div class="alert-icon">
+        !
+    </div>
+
+    <div th:text="${errorMessage}">
+        Something went wrong.
+    </div>
+
+</div>
+
+
+
+<!-- DIRECTORY -->
+
+<section class="directory-card">
+
+
+    <!-- TOOLBAR -->
+
+    <div class="directory-toolbar">
+
+        <div class="toolbar-title">
+
+            <div class="toolbar-icon">
+                ♙
+            </div>
+
+            <div>
+
+                <h2>
+                    Customer Directory
+                </h2>
+
+                <p>
+                    Registered accounts and access status
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="customer-count"
+            th:text="${customers.size() + ' customers'}">
+
+            0 customers
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Customer
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Phone
+                    </th>
+
+                    <th>
+                        Default Address
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                <!-- CUSTOMER ROW -->
+
+                <tr th:each="cust : ${customers}">
+
+
+                    <!-- CUSTOMER -->
+
+                    <td>
+
+                        <div class="customer-cell">
+
+
+                            <div class="customer-avatar">
+
+                                <span
+                                    th:text="${cust.name != null and !#strings.isEmpty(cust.name)
+                                        ? #strings.substring(cust.name, 0, 1).toUpperCase()
+                                        : 'C'}">
+
+                                    C
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="customer-info">
+
+                                <strong
+                                    class="customer-name"
+                                    th:text="${cust.name != null and !#strings.isEmpty(cust.name)
+                                        ? cust.name
+                                        : 'Customer'}">
+
+                                    Customer Name
+
+                                </strong>
+
+
+                                <span
+                                    class="customer-id"
+                                    th:text="'Customer #' + ${cust.id}">
+
+                                    Customer #000
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+
+                    <!-- EMAIL -->
+
+                    <td>
+
+                        <span
+                            class="email"
+                            th:text="${cust.user != null
+                                ? cust.user.email
+                                : 'N/A'}">
+
+                            email@example.com
+
+                        </span>
+
+                    </td>
+
+
+
+                    <!-- PHONE -->
+
+                    <td>
+
+                        <span
+                            class="phone"
+                            th:text="${cust.phone}">
+
+                            9876543210
+
+                        </span>
+
+                    </td>
+
+
+
+                    <!-- ADDRESS -->
+
+                    <td>
+
+                        <span
+                            class="address"
+                            th:text="${cust.address}">
+
+                            City, State
+
+                        </span>
+
+                    </td>
+
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+
+                        <span
+                            th:if="${cust.user != null and cust.user.enabled}"
+                            class="badge badge-active">
+
+                            Active
+
+                        </span>
+
+
+                        <span
+                            th:if="${cust.user != null and !cust.user.enabled}"
+                            class="badge badge-suspended">
+
+                            Suspended
+
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div class="actions">
+
+
+                            <!-- EDIT -->
+
+                            <a
+                                th:href="@{/admin/customers/{id}(id=${cust.id})}"
+                                class="btn btn-edit">
+
+                                Edit
+
+                            </a>
+
+
+
+                            <!-- TOGGLE STATUS -->
+
+                            <form
+                                class="action-form"
+                                th:action="@{/admin/customers/{id}/toggle-status(id=${cust.id})}"
+                                method="post">
+
+
+                                <input
+                                    type="hidden"
+                                    th:name="${_csrf.parameterName}"
+                                    th:value="${_csrf.token}">
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-toggle"
+                                    th:text="${cust.user != null and cust.user.enabled
+                                        ? 'Suspend'
+                                        : 'Activate'}">
+
+                                    Suspend
+
+                                </button>
+
+                            </form>
+
+
+
+                            <!-- DELETE -->
+
+                            <form
+                                class="action-form"
+                                th:action="@{/admin/customers/{id}/delete(id=${cust.id})}"
+                                method="post"
+                                onsubmit="return confirm('Delete this customer? This cannot be undone.');">
+
+
+                                <input
+                                    type="hidden"
+                                    th:name="${_csrf.parameterName}"
+                                    th:value="${_csrf.token}">
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-delete">
+
+                                    Delete
+
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+
+
+                <!-- EMPTY STATE -->
+
+                <tr th:if="${#lists.isEmpty(customers)}">
+
+                    <td colspan="6">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ♙
+                            </div>
+
+
+                            <h3>
+                                No customers yet
+                            </h3>
+
+
+                            <p>
+                                Registered customer accounts will appear
+                                here once they join Catering Hub.
+                            </p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- FOOTER -->
+
+    <div class="directory-footer">
+
+        <span>
+            Customer account management
+        </span>
+
+        <span>
+            <strong>Catering Hub</strong> · Admin Console
+        </span>
+
+    </div>
+
+
+</section>
+
+
+</main>
+
+</body>
+
+</html>

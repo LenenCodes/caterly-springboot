@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile | Caterly</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        :root {
+            --espresso: #241813;
+            --espresso-soft: #34231d;
+
+            --cream: #f8f3eb;
+            --cream-dark: #eee5d8;
+
+            --white: #ffffff;
+
+            --terracotta: #b85c38;
+            --terracotta-dark: #99472a;
+
+            --gold: #c69a55;
+
+            --text: #29211d;
+            --muted: #766b64;
+
+            --border: #e5dbcf;
+
+            --green: #26734d;
+            --green-soft: #eaf5ee;
+
+            --red: #ad4038;
+            --red-soft: #fff0ee;
+
+            --shadow:
+                0 20px 50px rgba(55, 38, 26, 0.09);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family: "DM Sans", sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 7% 8%,
+                    rgba(198, 154, 85, 0.11),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 94% 22%,
+                    rgba(184, 92, 56, 0.07),
+                    transparent 28%
+                ),
+                var(--cream);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            height: 74px;
+
+            padding: 0 5%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(36, 24, 19, 0.97);
+
+            color: #fff;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            position: sticky;
+            top: 0;
+            z-index: 20;
+
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-size: 1.06rem;
+            font-weight: 700;
+
+            letter-spacing: -0.02em;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 11px;
+
+            background:
+                rgba(198, 154, 85, 0.14);
+
+            border:
+                1px solid rgba(198, 154, 85, 0.25);
+
+            font-size: 1.05rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 14px;
+
+            border-radius: 10px;
+
+            color: #d8cec7;
+
+            font-size: 0.84rem;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            max-width: 1040px;
+
+            margin: 0 auto;
+
+            padding: 52px 22px 70px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 9px;
+
+            color: var(--terracotta);
+
+            font-size: 0.72rem;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--gold);
+        }
+
+        .page-header h1 {
+            font-family: "Playfair Display", serif;
+
+            color: var(--espresso);
+
+            font-size: clamp(2rem, 4vw, 2.75rem);
+
+            line-height: 1.1;
+
+            letter-spacing: -0.035em;
+
+            margin-bottom: 9px;
+        }
+
+        .page-header p {
+            max-width: 650px;
+
+            color: var(--muted);
+
+            font-size: 0.9rem;
+
+            line-height: 1.65;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .profile-grid {
+            display: grid;
+
+            grid-template-columns:
+                300px minmax(0, 1fr);
+
+            gap: 22px;
+
+            align-items: start;
+        }
+
+        .card {
+            background:
+                rgba(255, 255, 255, 0.94);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 20px;
+
+            box-shadow: var(--shadow);
+        }
+
+        /* =========================
+           PROFILE SUMMARY
+        ========================= */
+
+        .profile-summary {
+            overflow: hidden;
+
+            position: sticky;
+            top: 98px;
+        }
+
+        .summary-cover {
+            height: 105px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--espresso),
+                    var(--espresso-soft)
+                );
+
+            position: relative;
+        }
+
+        .summary-cover::before {
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+            height: 170px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(198, 154, 85, 0.22);
+
+            top: -75px;
+            right: -50px;
+        }
+
+        .summary-cover::after {
+            content: "";
+
+            position: absolute;
+
+            width: 90px;
+            height: 90px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            bottom: -45px;
+            left: 25px;
+        }
+
+        .avatar {
+            width: 82px;
+            height: 82px;
+
+            display: grid;
+            place-items: center;
+
+            margin:
+                -41px auto 0;
+
+            position: relative;
+            z-index: 2;
+
+            border-radius: 50%;
+
+            background: var(--cream);
+
+            border:
+                5px solid #ffffff;
+
+            color: var(--terracotta);
+
+            font-size: 1.65rem;
+
+            box-shadow:
+                0 7px 20px rgba(36, 24, 19, 0.12);
+        }
+
+        .summary-content {
+            padding: 0 23px 24px;
+
+            text-align: center;
+        }
+
+        .customer-name {
+            margin-top: 12px;
+
+            color: var(--espresso);
+
+            font-family: "Playfair Display", serif;
+
+            font-size: 1.3rem;
+        }
+
+        .customer-email {
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 0.76rem;
+
+            word-break: break-word;
+        }
+
+        .account-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            margin-top: 13px;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background: var(--green-soft);
+
+            color: var(--green);
+
+            font-size: 0.69rem;
+
+            font-weight: 700;
+        }
+
+        .summary-divider {
+            height: 1px;
+
+            background: var(--border);
+
+            margin: 20px 0;
+        }
+
+        .summary-note {
+            color: var(--muted);
+
+            font-size: 0.75rem;
+
+            line-height: 1.6;
+
+            text-align: left;
+        }
+
+        .summary-note strong {
+            color: var(--text);
+        }
+
+        /* =========================
+           FORM CARD
+        ========================= */
+
+        .form-card {
+            padding: 30px;
+        }
+
+        .form-header {
+            padding-bottom: 20px;
+
+            margin-bottom: 24px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .form-header h2 {
+            color: var(--espresso);
+
+            font-size: 1.1rem;
+
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: var(--muted);
+
+            font-size: 0.79rem;
+
+            line-height: 1.5;
+        }
+
+        /* =========================
+           ALERTS
+        ========================= */
+
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+
+            padding: 13px 14px;
+
+            border-radius: 12px;
+
+            margin-bottom: 20px;
+
+            font-size: 0.8rem;
+
+            line-height: 1.5;
+        }
+
+        .alert-success {
+            background: var(--green-soft);
+
+            color: var(--green);
+
+            border:
+                1px solid rgba(38, 115, 77, 0.13);
+        }
+
+        .alert-danger {
+            background: var(--red-soft);
+
+            color: var(--red);
+
+            border:
+                1px solid rgba(173, 64, 56, 0.13);
+        }
+
+        .alert-icon {
+            flex: 0 0 auto;
+
+            font-weight: 800;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: var(--espresso);
+
+            font-size: 0.77rem;
+
+            font-weight: 700;
+        }
+
+        .field-hint {
+            display: block;
+
+            margin-top: 6px;
+
+            color: #9a8e85;
+
+            font-size: 0.68rem;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+
+            padding:
+                0 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: #fff;
+
+            color: var(--text);
+
+            font-family: inherit;
+
+            font-size: 0.86rem;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #aaa19b;
+        }
+
+        input:focus {
+            border-color: var(--terracotta);
+
+            box-shadow:
+                0 0 0 3px rgba(184, 92, 56, 0.08);
+        }
+
+        input:disabled {
+            background: #f5f1eb;
+
+            color: var(--muted);
+
+            cursor: not-allowed;
+        }
+
+        .email-field {
+            position: relative;
+        }
+
+        .locked-badge {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            padding: 4px 8px;
+
+            border-radius: 7px;
+
+            background: var(--cream-dark);
+
+            color: var(--muted);
+
+            font-size: 0.63rem;
+
+            font-weight: 700;
+        }
+
+        /* =========================
+           FORM FOOTER
+        ========================= */
+
+        .form-footer {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding-top: 8px;
+
+            margin-top: 5px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+        .privacy-note {
+            max-width: 310px;
+
+            color: #91857c;
+
+            font-size: 0.68rem;
+
+            line-height: 1.5;
+        }
+
+        .btn {
+            min-width: 160px;
+
+            height: 46px;
+
+            padding:
+                0 20px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background: var(--espresso);
+
+            color: #ffffff;
+
+            font-family: inherit;
+
+            font-size: 0.83rem;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--terracotta);
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 18px rgba(184, 92, 56, 0.18);
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 780px) {
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-summary {
+                position: static;
+            }
+
+            .summary-cover {
+                height: 85px;
+            }
+
+            .avatar {
+                width: 74px;
+                height: 74px;
+
+                margin-top: -37px;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                height: 68px;
+
+                padding: 0 17px;
+            }
+
+            .brand {
+                font-size: 0.95rem;
+            }
+
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .back-link {
+                padding: 8px;
+
+                font-size: 0.76rem;
+            }
+
+            .page {
+                padding:
+                    32px 14px 50px;
+            }
+
+            .form-card {
+                padding: 22px 19px;
+            }
+
+            .form-footer {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .privacy-note {
+                max-width: none;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <a
+        th:href="@{/customer/dashboard}"
+        class="brand">
+
+        <span class="brand-icon">
+            🍽️
+        </span>
+
+        <span>
+            Caterly
+        </span>
+
+    </a>
+
+
+    <a
+        th:href="@{/customer/dashboard}"
+        class="back-link">
+
+        <span>←</span>
+
+        <span>
+            Back to Dashboard
+        </span>
+
+    </a>
+
+</nav>
+
+
+<main class="page">
+
+
+    <!-- =========================
+         PAGE HEADER
+    ========================= -->
+
+    <section class="page-header">
+
+        <div class="eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            Account Settings
+
+        </div>
+
+        <h1>
+            Edit your profile
+        </h1>
+
+        <p>
+            Keep your contact details and default event information up to date.
+            These details help make your catering bookings smoother.
+        </p>
+
+    </section>
+
+
+    <div class="profile-grid">
+
+
+        <!-- =========================
+             PROFILE SUMMARY
+        ========================= -->
+
+        <aside class="card profile-summary">
+
+            <div class="summary-cover"></div>
+
+
+            <div class="avatar">
+                👤
+            </div>
+
+
+            <div class="summary-content">
+
+                <h2
+                    class="customer-name"
+                    th:text="${customer.name}">
+                    Customer Name
+                </h2>
+
+
+                <p
+                    class="customer-email"
+                    th:text="${customer.user != null ? customer.user.email : ''}">
+                    customer@example.com
+                </p>
+
+
+                <div class="account-badge">
+
+                    <span>●</span>
+
+                    <span>
+                        Active Customer
+                    </span>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <p class="summary-note">
+
+                    <strong>Your profile matters.</strong>
+
+                    Your name, phone number and default address can make
+                    future event bookings quicker and easier.
+
+                </p>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             EDIT FORM
+        ========================= -->
+
+        <section class="card form-card">
+
+
+            <div class="form-header">
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <p>
+                    Update the information below and save your changes.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 ALERTS
+            ========================= -->
+
+            <div
+                th:if="${successMessage}"
+                class="alert alert-success">
+
+                <span class="alert-icon">
+                    ✓
+                </span>
+
+                <span
+                    th:text="${successMessage}">
+                </span>
+
+            </div>
+
+
+            <div
+                th:if="${errorMessage}"
+                class="alert alert-danger">
+
+                <span class="alert-icon">
+                    !
+                </span>
+
+                <span
+                    th:text="${errorMessage}">
+                </span>
+
+            </div>
+
+
+            <!-- =========================
+                 FORM
+            ========================= -->
+
+            <form
+                th:action="@{/customer/profile/edit}"
+                method="post">
+
+
+                <!-- CSRF -->
+
+                <input
+                    type="hidden"
+                    th:name="${_csrf.parameterName}"
+                    th:value="${_csrf.token}">
+
+
+                <!-- Registered Email -->
+
+                <div class="form-group">
+
+                    <label>
+                        Registered Email
+                    </label>
+
+                    <div class="email-field">
+
+                        <input
+                            type="email"
+                            th:value="${customer.user != null ? customer.user.email : ''}"
+                            disabled>
+
+                        <span class="locked-badge">
+                            🔒 Account ID
+                        </span>
+
+                    </div>
+
+                    <span class="field-hint">
+                        Your registered email is linked to your account and cannot be changed here.
+                    </span>
+
+                </div>
+
+
+                <!-- Full Name -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                        id="name"
+                        type="text"
+                        name="name"
+                        th:value="${customer.name}"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required>
+
+                </div>
+
+
+                <!-- Phone -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        id="phone"
+                        type="tel"
+                        name="phone"
+                        th:value="${customer.phone}"
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                        required>
+
+                </div>
+
+
+                <!-- Address -->
+
+                <div class="form-group">
+
+                    <label for="address">
+                        Default Event Address
+                    </label>
+
+                    <input
+                        id="address"
+                        type="text"
+                        name="address"
+                        th:value="${customer.address}"
+                        placeholder="Enter your usual event address"
+                        autocomplete="street-address"
+                        required>
+
+                    <span class="field-hint">
+                        You can still provide a different venue address when making a booking.
+                    </span>
+
+                </div>
+
+
+                <!-- =========================
+                     FORM FOOTER
+                ========================= -->
+
+                <div class="form-footer">
+
+                    <p class="privacy-note">
+                        🔐 Your account information is used only to manage your
+                        Catering Hub profile and bookings.
+                    </p>
+
+
+                    <button
+                        type="submit"
+                        class="btn">
+
+                        Save Profile
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+</body>
+
+</html>

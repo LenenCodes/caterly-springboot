@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Select Account Type | Caterly</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        :root {
+            --espresso: #241b17;
+            --espresso-soft: #332722;
+
+            --cream: #f8f4ee;
+            --cream-dark: #eee6db;
+
+            --card: #fffdf9;
+
+            --terracotta: #b86545;
+            --terracotta-dark: #985039;
+
+            --gold: #d4a74d;
+            --gold-soft: #f8efd9;
+
+            --text: #2c2724;
+            --muted: #766d66;
+
+            --border: #e4dbd1;
+
+            --shadow: 0 25px 70px rgba(36, 27, 23, 0.13);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family: "DM Sans", sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(184, 101, 69, 0.10),
+                    transparent 27%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(212, 167, 77, 0.12),
+                    transparent 28%
+                ),
+                var(--cream);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px 20px;
+        }
+
+        /* =========================
+           MAIN CARD
+        ========================== */
+
+        .choice-card {
+            position: relative;
+
+            width: 100%;
+            max-width: 850px;
+
+            background: var(--card);
+
+            border: 1px solid var(--border);
+            border-radius: 28px;
+
+            overflow: hidden;
+
+            box-shadow: var(--shadow);
+        }
+
+        /* Decorative top strip */
+
+        .top-strip {
+            height: 6px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--espresso),
+                    var(--terracotta),
+                    var(--gold)
+                );
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        .card-header {
+            text-align: center;
+
+            padding: 48px 35px 28px;
+        }
+
+        .brand {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            margin-bottom: 24px;
+
+            color: var(--espresso);
+
+            font-size: 1.08rem;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: var(--espresso);
+
+            color: white;
+
+            font-size: 1.1rem;
+
+            box-shadow:
+                0 7px 15px rgba(36, 27, 23, 0.15);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 12px;
+
+            color: var(--terracotta);
+
+            font-size: 0.7rem;
+            font-weight: 700;
+
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before,
+        .eyebrow::after {
+            content: "";
+
+            width: 25px;
+            height: 1px;
+
+            background: var(--terracotta);
+
+            opacity: 0.55;
+        }
+
+        .card-header h1 {
+            margin: 0;
+
+            color: var(--espresso);
+
+            font-family: "Playfair Display", serif;
+
+            font-size: clamp(2.2rem, 5vw, 3.15rem);
+
+            line-height: 1.08;
+
+            letter-spacing: -0.8px;
+        }
+
+        .card-header p {
+            max-width: 510px;
+
+            margin: 14px auto 0;
+
+            color: var(--muted);
+
+            font-size: 0.9rem;
+
+            line-height: 1.7;
+        }
+
+        /* =========================
+           OPTIONS
+        ========================== */
+
+        .options-section {
+            padding: 10px 38px 38px;
+        }
+
+        .options-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 18px;
+        }
+
+        .option-box {
+            position: relative;
+
+            min-height: 275px;
+
+            padding: 30px 27px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            text-decoration: none;
+
+            color: var(--text);
+
+            background: #fff;
+
+            border: 1px solid var(--border);
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease,
+                background 0.25s ease;
+        }
+
+        .option-box::after {
+            content: "→";
+
+            position: absolute;
+
+            right: 22px;
+            bottom: 20px;
+
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: var(--cream);
+
+            color: var(--espresso);
+
+            font-size: 1.1rem;
+            font-weight: 700;
+
+            transition:
+                transform 0.25s ease,
+                background 0.25s ease,
+                color 0.25s ease;
+        }
+
+        .option-box:hover {
+            transform: translateY(-5px);
+
+            border-color: #d5c2b2;
+
+            background: #fffefa;
+
+            box-shadow:
+                0 16px 35px rgba(36, 27, 23, 0.10);
+        }
+
+        .option-box:hover::after {
+            transform: translateX(3px);
+
+            background: var(--espresso);
+
+            color: white;
+        }
+
+        /* =========================
+           ICON
+        ========================== */
+
+        .option-icon {
+            width: 62px;
+            height: 62px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 17px;
+
+            margin-bottom: 22px;
+
+            font-size: 1.7rem;
+
+            transition: transform 0.25s ease;
+        }
+
+        .customer-option .option-icon {
+            background: var(--gold-soft);
+        }
+
+        .caterer-option .option-icon {
+            background: rgba(184, 101, 69, 0.10);
+        }
+
+        .option-box:hover .option-icon {
+            transform: scale(1.06) rotate(-2deg);
+        }
+
+        /* =========================
+           OPTION CONTENT
+        ========================== */
+
+        .option-kicker {
+            margin-bottom: 7px;
+
+            color: var(--muted);
+
+            font-size: 0.67rem;
+            font-weight: 700;
+
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .option-box h2 {
+            margin: 0 0 9px;
+
+            color: var(--espresso);
+
+            font-family: "Playfair Display", serif;
+
+            font-size: 1.55rem;
+
+            letter-spacing: -0.3px;
+        }
+
+        .option-box p {
+            max-width: 280px;
+
+            margin: 0;
+
+            color: var(--muted);
+
+            font-size: 0.8rem;
+
+            line-height: 1.65;
+        }
+
+        .option-features {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 6px;
+
+            margin-top: 19px;
+        }
+
+        .feature-pill {
+            padding: 6px 9px;
+
+            border-radius: 999px;
+
+            background: #f5f0e9;
+
+            color: #71675f;
+
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        .card-footer {
+            padding: 23px 30px 27px;
+
+            border-top: 1px solid var(--border);
+
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 0.78rem;
+        }
+
+        .card-footer p {
+            margin: 0;
+        }
+
+        .card-footer a {
+            color: var(--terracotta);
+
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition: color 0.2s ease;
+        }
+
+        .card-footer a:hover {
+            color: var(--terracotta-dark);
+
+            text-decoration: underline;
+        }
+
+        .footer-dot {
+            margin: 0 8px;
+
+            color: #c9beb4;
+        }
+
+        /* =========================
+           BOTTOM BRAND NOTE
+        ========================== */
+
+        .brand-note {
+            margin-top: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+
+            color: #a19891;
+
+            font-size: 0.68rem;
+        }
+
+        .brand-note span {
+            color: var(--gold);
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 18px;
+            }
+
+            .choice-card {
+                border-radius: 22px;
+            }
+
+            .card-header {
+                padding: 38px 22px 24px;
+            }
+
+            .card-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .options-section {
+                padding: 8px 20px 25px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .option-box {
+                min-height: 230px;
+            }
+
+        }
+
+        @media (max-width: 420px) {
+
+            .card-header {
+                padding: 32px 18px 20px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .card-header h1 {
+                font-size: 1.95rem;
+            }
+
+            .card-header p {
+                font-size: 0.82rem;
+            }
+
+            .options-section {
+                padding: 5px 15px 20px;
+            }
+
+            .option-box {
+                min-height: 220px;
+                padding: 24px 21px;
+            }
+
+            .option-box h2 {
+                font-size: 1.4rem;
+            }
+
+            .card-footer {
+                padding: 20px 17px 23px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="choice-card">
+
+    <div class="top-strip"></div>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="card-header">
+
+        <div class="brand">
+
+            <span class="brand-icon">
+                🍽️
+            </span>
+
+            <span>
+                Caterly
+            </span>
+
+        </div>
+
+
+        <div class="eyebrow">
+            Welcome
+        </div>
+
+
+        <h1>
+            How will you use<br>
+            Catering Hub?
+        </h1>
+
+
+        <p>
+            Choose the experience that fits you. Whether you're planning
+            a memorable event or creating one through food, we'll take
+            you from there.
+        </p>
+
+    </header>
+
+
+    <!-- =========================
+         ACCOUNT OPTIONS
+    ========================== -->
+
+    <section class="options-section">
+
+        <div class="options-grid">
+
+
+            <!-- =========================
+                 CUSTOMER
+            ========================== -->
+
+            <a
+                th:href="@{/register/customer}"
+                class="option-box customer-option">
+
+                <div class="option-icon">
+                    🧑‍🤝‍🧑
+                </div>
+
+                <div class="option-kicker">
+                    Planning an event?
+                </div>
+
+                <h2>
+                    I'm a Customer
+                </h2>
+
+                <p>
+                    Discover caterers, explore their menus and customize
+                    plates for your next celebration.
+                </p>
+
+
+                <div class="option-features">
+
+                    <span class="feature-pill">
+                        Browse Caterers
+                    </span>
+
+                    <span class="feature-pill">
+                        Build Your Menu
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- =========================
+                 CATERER
+            ========================== -->
+
+            <a
+                th:href="@{/register/caterer}"
+                class="option-box caterer-option">
+
+                <div class="option-icon">
+                    👨‍🍳
+                </div>
+
+                <div class="option-kicker">
+                    Run a catering business?
+                </div>
+
+                <h2>
+                    I'm a Caterer
+                </h2>
+
+                <p>
+                    Showcase your catering business, publish menus and
+                    packages, and manage customer bookings.
+                </p>
+
+
+                <div class="option-features">
+
+                    <span class="feature-pill">
+                        Showcase Menus
+                    </span>
+
+                    <span class="feature-pill">
+                        Manage Orders
+                    </span>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="card-footer">
+
+        <p>
+            Already have an account?
+
+            <a th:href="@{/login}">
+                Sign In
+            </a>
+        </p>
+
+
+        <div class="brand-note">
+
+            <span>✦</span>
+
+            Your next great event starts here.
+
+            <span>✦</span>
+
+        </div>
+
+    </footer>
+
+</div>
+
+</body>
+
+</html>

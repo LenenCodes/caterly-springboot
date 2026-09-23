@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Caterer Dashboard - Caterly</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --espresso: #241b17;
+        --espresso-light: #352822;
+        --cream: #f7f3ed;
+        --cream-dark: #eee7dc;
+        --white: #ffffff;
+        --terracotta: #b85c38;
+        --terracotta-dark: #97482b;
+        --gold: #c49a5a;
+        --text: #2d2926;
+        --muted: #756d67;
+        --border: #e6ded4;
+
+        --green: #2f7d58;
+        --green-bg: #edf7f1;
+
+        --amber: #a86f08;
+        --amber-bg: #fff7df;
+
+        --red: #a43f3f;
+        --red-bg: #fceeee;
+
+        --shadow-sm: 0 5px 18px rgba(36, 27, 23, 0.06);
+        --shadow-md: 0 14px 40px rgba(36, 27, 23, 0.09);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "DM Sans", sans-serif;
+        background:
+            radial-gradient(circle at top right, rgba(196, 154, 90, 0.08), transparent 30%),
+            var(--cream);
+        color: var(--text);
+        min-height: 100vh;
+    }
+
+    a {
+        color: inherit;
+    }
+
+    button,
+    input {
+        font-family: inherit;
+    }
+
+    /* =========================
+       NAVBAR
+    ========================== */
+
+    .navbar {
+        min-height: 76px;
+        padding: 0 5%;
+        background: var(--espresso);
+        color: var(--white);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        box-shadow: 0 8px 28px rgba(36, 27, 23, 0.16);
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        text-decoration: none;
+        font-family: "Playfair Display", serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+    }
+
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+
+        display: grid;
+        place-items: center;
+
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        font-size: 1.15rem;
+    }
+
+    .navbar-user {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .business-name {
+        color: #eee6dc;
+        font-size: 0.9rem;
+        font-weight: 600;
+
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .btn-profile-nav,
+    .btn-logout {
+        min-height: 40px;
+        padding: 0 14px;
+
+        border-radius: 10px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        font-size: 0.84rem;
+        font-weight: 700;
+        text-decoration: none;
+
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .btn-profile-nav {
+        color: #f8f2ea;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-profile-nav:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .btn-logout {
+        color: #ffd6d0;
+        background: transparent;
+        border: 1px solid rgba(255, 170, 160, 0.35);
+        cursor: pointer;
+    }
+
+    .btn-logout:hover {
+        background: rgba(164, 63, 63, 0.25);
+        border-color: rgba(255, 170, 160, 0.55);
+    }
+
+    /* =========================
+       MAIN CONTAINER
+    ========================== */
+
+    .container {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 46px 0 70px;
+    }
+
+    /* =========================
+       PAGE INTRO
+    ========================== */
+
+    .page-intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 30px;
+
+        margin-bottom: 30px;
+    }
+
+    .eyebrow {
+        margin: 0 0 8px;
+
+        color: var(--terracotta);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+    }
+
+    .page-title {
+        margin: 0;
+
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.08;
+        letter-spacing: -1px;
+        color: var(--espresso);
+    }
+
+    .page-subtitle {
+        max-width: 610px;
+        margin: 12px 0 0;
+
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.7;
+    }
+
+    .partner-mark {
+        flex-shrink: 0;
+
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+
+        display: grid;
+        place-items: center;
+
+        background: var(--white);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+
+        font-size: 1.5rem;
+    }
+
+    /* =========================
+       ALERTS
+    ========================== */
+
+    .alert {
+        margin-bottom: 18px;
+        padding: 17px 20px;
+
+        border-radius: 14px;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+
+        font-size: 0.9rem;
+        line-height: 1.6;
+
+        box-shadow: var(--shadow-sm);
+    }
+
+    .alert-icon {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+
+        border-radius: 9px;
+
+        display: grid;
+        place-items: center;
+
+        font-size: 0.9rem;
+    }
+
+    .alert strong {
+        color: inherit;
+    }
+
+    .alert-success {
+        background: var(--green-bg);
+        color: #276547;
+        border: 1px solid #cfe9da;
+    }
+
+    .alert-success .alert-icon {
+        background: #d8efe2;
+    }
+
+    .alert-warning {
+        background: var(--amber-bg);
+        color: #765208;
+        border: 1px solid #f0dfad;
+    }
+
+    .alert-warning .alert-icon {
+        background: #f6e8bd;
+    }
+
+    .alert-danger {
+        background: var(--red-bg);
+        color: #863b3b;
+        border: 1px solid #efd0d0;
+    }
+
+    .alert-danger .alert-icon {
+        background: #f4dada;
+    }
+
+    /* =========================
+       PROFILE CARD
+    ========================== */
+
+    .profile-card {
+        position: relative;
+        overflow: hidden;
+
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+
+        box-shadow: var(--shadow-md);
+
+        padding: 30px;
+        margin-bottom: 34px;
+    }
+
+    .profile-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 4px;
+
+        background: linear-gradient(
+            90deg,
+            var(--terracotta),
+            var(--gold)
+        );
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+
+        padding-bottom: 23px;
+        margin-bottom: 25px;
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 0;
+    }
+
+    .business-avatar {
+        width: 54px;
+        height: 54px;
+        flex-shrink: 0;
+
+        border-radius: 16px;
+
+        display: grid;
+        place-items: center;
+
+        background: var(--espresso);
+        color: #f6dfbb;
+
+        font-size: 1.25rem;
+
+        box-shadow: 0 8px 18px rgba(36, 27, 23, 0.14);
+    }
+
+    .title-wrap {
+        min-width: 0;
+    }
+
+    .card-kicker {
+        margin: 0 0 3px;
+
+        color: var(--muted);
+        font-size: 0.73rem;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .card-title {
+        margin: 0;
+
+        color: var(--espresso);
+        font-family: "Playfair Display", serif;
+        font-size: 1.55rem;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       BADGES
+    ========================== */
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 7px 11px;
+        border-radius: 999px;
+
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        white-space: nowrap;
+    }
+
+    .badge-verified {
+        background: var(--green-bg);
+        color: var(--green);
+        border: 1px solid #cfe9da;
+    }
+
+    .badge-pending {
+        background: var(--amber-bg);
+        color: var(--amber);
+        border: 1px solid #f0dfad;
+    }
+
+    .header-actions {
+        flex-shrink: 0;
+    }
+
+    .btn-card-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 10px 15px;
+
+        border-radius: 10px;
+
+        background: #f5f1eb;
+        border: 1px solid var(--border);
+
+        color: var(--espresso);
+
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-decoration: none;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .btn-card-edit:hover {
+        background: var(--cream-dark);
+        transform: translateY(-1px);
+    }
+
+    /* =========================
+       PROFILE GRID
+    ========================== */
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .profile-item {
+        min-width: 0;
+        padding: 18px;
+
+        border-radius: 14px;
+        background: #faf8f5;
+        border: 1px solid #eee8df;
+    }
+
+    .profile-item label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #8a817a;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+    }
+
+    .profile-item span {
+        display: block;
+
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 700;
+        line-height: 1.5;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =========================
+       MANAGEMENT SECTION
+    ========================== */
+
+    .section-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        margin-bottom: 17px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+
+        color: var(--espresso);
+        font-family: "Playfair Display", serif;
+        font-size: 1.65rem;
+    }
+
+    .section-heading p {
+        margin: 5px 0 0;
+
+        color: var(--muted);
+        font-size: 0.84rem;
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .action-card {
+        position: relative;
+        overflow: hidden;
+
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+
+        padding: 28px;
+
+        box-shadow: var(--shadow-sm);
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: #d8cbbd;
+    }
+
+    .action-card::after {
+        content: "";
+        position: absolute;
+
+        right: -40px;
+        bottom: -55px;
+
+        width: 150px;
+        height: 150px;
+
+        border-radius: 50%;
+
+        background: rgba(196, 154, 90, 0.08);
+    }
+
+    .action-icon {
+        width: 54px;
+        height: 54px;
+
+        margin-bottom: 21px;
+
+        border-radius: 16px;
+
+        display: grid;
+        place-items: center;
+
+        background: #f5eee6;
+        color: var(--terracotta);
+
+        font-size: 1.4rem;
+    }
+
+    .action-card h3 {
+        position: relative;
+        z-index: 1;
+
+        margin: 0 0 8px;
+
+        color: var(--espresso);
+        font-family: "Playfair Display", serif;
+        font-size: 1.35rem;
+    }
+
+    .action-card p {
+        position: relative;
+        z-index: 1;
+
+        margin: 0 0 24px;
+
+        max-width: 470px;
+
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .action-footer {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .action-meta {
+        color: #968d85;
+        font-size: 0.73rem;
+        font-weight: 700;
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+
+        min-height: 42px;
+        padding: 0 17px;
+
+        border-radius: 11px;
+
+        background: var(--espresso);
+        color: var(--white);
+
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-decoration: none;
+
+        box-shadow: 0 7px 15px rgba(36, 27, 23, 0.13);
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .btn-action:hover {
+        background: var(--terracotta);
+        transform: translateY(-1px);
+        box-shadow: 0 9px 18px rgba(184, 92, 56, 0.2);
+    }
+
+    .btn-disabled {
+        background: #aaa29b;
+        pointer-events: none;
+        opacity: 0.65;
+        box-shadow: none;
+    }
+
+    /* =========================
+       FOOTER NOTE
+    ========================== */
+
+    .dashboard-note {
+        margin-top: 27px;
+        padding: 18px 20px;
+
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid var(--border);
+
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .dashboard-note strong {
+        color: var(--espresso);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 900px) {
+        .profile-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .page-intro {
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .navbar {
+            padding: 12px 20px;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .navbar-user {
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .business-name {
+            display: none;
+        }
+
+        .container {
+            width: min(100% - 28px, 1180px);
+            padding-top: 32px;
+        }
+
+        .page-intro {
+            margin-bottom: 24px;
+        }
+
+        .partner-mark {
+            display: none;
+        }
+
+        .profile-card {
+            padding: 22px;
+            border-radius: 18px;
+        }
+
+        .card-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-card-edit {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .navbar {
+            min-height: auto;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 15px 18px;
+        }
+
+        .navbar-user {
+            justify-content: flex-start;
+            gap: 8px;
+        }
+
+        .btn-profile-nav,
+        .btn-logout {
+            flex: 1;
+        }
+
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-left {
+            align-items: flex-start;
+        }
+
+        .card-title {
+            white-space: normal;
+            font-size: 1.35rem;
+        }
+
+        .badge {
+            margin-top: 5px;
+        }
+
+        .action-card {
+            padding: 23px;
+        }
+
+        .action-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+
+        .action-meta {
+            display: none;
+        }
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<!-- =========================
+     NAVIGATION
+========================== -->
+
+<nav class="navbar">
+
+
+<a th:href="@{/caterer/dashboard}" class="navbar-brand">
+    <span class="brand-icon">🍴</span>
+    <span>Caterly</span>
+</a>
+
+<div class="navbar-user">
+
+    <span class="business-name"
+          th:text="${caterer.businessName}">
+        Business Name
+    </span>
+
+    <a th:href="@{/caterer/profile/edit}"
+       class="btn-profile-nav">
+        ⚙️ Edit Profile
+    </a>
+
+    <!-- Logout Form with CSRF -->
+    <form th:action="@{/logout}"
+          method="post"
+          style="margin: 0;">
+
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}">
+
+        <button type="submit"
+                class="btn-logout">
+            Logout
+        </button>
+
+    </form>
+
+</div>
+
+
+</nav>
+
+<!-- =========================
+     MAIN CONTENT
+========================== -->
+
+<div class="container">
+
+
+<!-- Page Introduction -->
+
+<div class="page-intro">
+
+    <div>
+        <p class="eyebrow">Caterer Partner Portal</p>
+
+        <h1 class="page-title">
+            Welcome back, partner.
+        </h1>
+
+        <p class="page-subtitle">
+            Manage your catering business, keep your menu up to date,
+            and stay on top of customer booking requests from one place.
+        </p>
+    </div>
+
+    <div class="partner-mark">
+        🍽️
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FLASH NOTIFICATIONS
+========================== -->
+
+<div th:if="${successMessage}"
+     class="alert alert-success">
+
+    <div class="alert-icon">✓</div>
+
+    <div th:text="${successMessage}">
+        Operation completed successfully.
+    </div>
+
+</div>
+
+
+<div th:if="${errorMessage}"
+     class="alert alert-danger">
+
+    <div class="alert-icon">!</div>
+
+    <div th:text="${errorMessage}">
+        Something went wrong.
+    </div>
+
+</div>
+
+
+<!-- =========================
+     VERIFICATION STATUS
+========================== -->
+
+<div th:if="${caterer.isVerified}"
+     class="alert alert-success">
+
+    <div class="alert-icon">✓</div>
+
+    <div>
+        <strong>Verified Partner</strong><br>
+        Your profile is active and publicly visible to customers
+        looking for catering services.
+    </div>
+
+</div>
+
+
+<div th:unless="${caterer.isVerified}"
+     class="alert alert-warning">
+
+    <div class="alert-icon">⏳</div>
+
+    <div>
+        <strong>Pending Verification</strong><br>
+        Your account is currently undergoing admin review.
+        You can prepare your menu items while awaiting approval.
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CATERER PROFILE
+========================== -->
+
+<div class="profile-card">
+
+    <div class="card-header">
+
+        <div class="header-left">
+
+            <div class="business-avatar">
+                🍴
+            </div>
+
+            <div class="title-wrap">
+
+                <p class="card-kicker">
+                    Your catering business
+                </p>
+
+                <h2 class="card-title"
+                    th:text="${caterer.businessName}">
+                    Royal Feast Catering
+                </h2>
+
+                <span th:if="${caterer.isVerified}"
+                      class="badge badge-verified">
+                    ✓ VERIFIED PARTNER
+                </span>
+
+                <span th:unless="${caterer.isVerified}"
+                      class="badge badge-pending">
+                    ⧗ UNDER REVIEW
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a th:href="@{/caterer/profile/edit}"
+               class="btn-card-edit">
+                ✏️ Edit Details
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Profile Information -->
+
+    <div class="profile-grid">
+
+        <div class="profile-item">
+
+            <label>Login Email</label>
+
+            <span th:text="${caterer.user.email}">
+                caterer@example.com
+            </span>
+
+        </div>
+
+
+        <div class="profile-item">
+
+            <label>Phone Number</label>
+
+            <span th:text="${caterer.phone}">
+                +91 9876543210
+            </span>
+
+        </div>
+
+
+        <div class="profile-item">
+
+            <label>Kitchen / Address</label>
+
+            <span th:text="${caterer.address}">
+                123 Gourmet Way, City
+            </span>
+
+        </div>
+
+
+        <div class="profile-item">
+
+            <label>Account Role</label>
+
+            <span th:text="${caterer.user.role}">
+                ROLE_CATERER
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MANAGEMENT
+========================== -->
+
+<div class="section-heading">
+
+    <div>
+        <h2>Business Management</h2>
+
+        <p>
+            Everything you need to run your catering operations.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="action-grid">
+
+    <!-- =========================
+         MENU MANAGEMENT
+    ========================== -->
+
+    <div class="action-card">
+
+        <div class="action-icon">
+            🍛
+        </div>
+
+        <h3>
+            Menu Management
+        </h3>
+
+        <p>
+            Add, update, or remove dishes and catering packages
+            available for your customers and upcoming events.
+        </p>
+
+        <div class="action-footer">
+
+            <span class="action-meta">
+                Keep your offerings fresh
+            </span>
+
+            <a th:href="@{/caterer/dishes}"
+               class="btn-action">
+                Manage Menu
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         BOOKINGS
+    ========================== -->
+
+    <div class="action-card">
+
+        <div class="action-icon">
+            📋
+        </div>
+
+        <h3>
+            Incoming Bookings
+        </h3>
+
+        <p>
+            Review customer catering requests, accept orders,
+            and manage your upcoming event schedule.
+        </p>
+
+        <div class="action-footer">
+
+            <span class="action-meta"
+                  th:if="${caterer.isVerified}">
+                Customer requests are waiting here
+            </span>
+
+            <span class="action-meta"
+                  th:unless="${caterer.isVerified}">
+                Available after verification
+            </span>
+
+            <a th:href="@{/caterer/bookings}"
+               class="btn-action"
+               th:classappend="${!caterer.isVerified} ? ' btn-disabled' : ''">
+
+                <span th:if="${caterer.isVerified}">
+                    View Bookings
+                </span>
+
+                <span th:unless="${caterer.isVerified}">
+                    🔒 Verification Required
+                </span>
+
+                <span th:if="${caterer.isVerified}">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     HELPFUL NOTE
+========================== -->
+
+<div class="dashboard-note">
+
+    <strong>Partner tip:</strong>
+    Keep your business details and menu current so customers can
+    confidently choose your catering service for their events.
+
+</div>
+
+
+</div>
+
+</body>
+</html>

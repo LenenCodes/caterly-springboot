@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Caterer Registration | Caterly</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+	href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+	rel="stylesheet">
+
+<style>
+:root {
+	--espresso: #241b17;
+	--espresso-soft: #332722;
+	--cream: #f8f4ee;
+	--cream-dark: #eee6db;
+	--card: #fffdf9;
+	--terracotta: #b86545;
+	--terracotta-dark: #985039;
+	--gold: #d4a74d;
+	--gold-soft: #f8efd9;
+	--text: #2c2724;
+	--muted: #766d66;
+	--border: #e4dbd1;
+	--danger: #b64b45;
+	--danger-soft: #fff3f1;
+	--shadow: 0 25px 70px rgba(36, 27, 23, 0.13);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: "DM Sans", sans-serif;
+	color: var(--text);
+	background: radial-gradient(circle at 8% 12%, rgba(184, 101, 69, 0.10),
+		transparent 27%),
+		radial-gradient(circle at 92% 88%, rgba(212, 167, 77, 0.10),
+		transparent 28%), var(--cream);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px;
+}
+
+/* =========================
+           MAIN LAYOUT
+        ========================== */
+.registration-shell {
+	width: 100%;
+	max-width: 1060px;
+	display: grid;
+	grid-template-columns: 0.9fr 1.1fr;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 28px;
+	overflow: hidden;
+	box-shadow: var(--shadow);
+}
+
+/* =========================
+           LEFT PANEL
+        ========================== */
+.brand-panel {
+	position: relative;
+	padding: 48px 42px;
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.02),
+		rgba(255, 255, 255, 0)), var(--espresso);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	overflow: hidden;
+}
+
+.brand-panel::before {
+	content: "";
+	position: absolute;
+	width: 280px;
+	height: 280px;
+	border-radius: 50%;
+	right: -120px;
+	top: -100px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 0 0 35px rgba(255, 255, 255, 0.025), 0 0 0 70px
+		rgba(255, 255, 255, 0.015);
+}
+
+.brand-panel::after {
+	content: "✦";
+	position: absolute;
+	right: 36px;
+	bottom: 30px;
+	font-size: 6rem;
+	color: rgba(255, 255, 255, 0.035);
+	pointer-events: none;
+}
+
+.brand-content {
+	position: relative;
+	z-index: 1;
+}
+
+.brand-mark {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 46px;
+	color: white;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.brand-icon {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.10);
+	font-size: 1.15rem;
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 14px;
+	color: #d9a86e;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 1.7px;
+	text-transform: uppercase;
+}
+
+.eyebrow::before {
+	content: "";
+	width: 24px;
+	height: 1px;
+	background: #d9a86e;
+}
+
+.brand-panel h1 {
+	margin: 0;
+	max-width: 390px;
+	font-family: "Playfair Display", serif;
+	font-size: clamp(2.4rem, 4vw, 3.5rem);
+	line-height: 1.08;
+	letter-spacing: -1px;
+}
+
+.brand-description {
+	max-width: 390px;
+	margin: 20px 0 0;
+	color: #c8bbb3;
+	font-size: 0.92rem;
+	line-height: 1.75;
+}
+
+/* =========================
+           BENEFITS
+        ========================== */
+.partner-benefits {
+	position: relative;
+	z-index: 1;
+	margin-top: 48px;
+	display: grid;
+	gap: 15px;
+}
+
+.benefit {
+	display: flex;
+	align-items: flex-start;
+	gap: 13px;
+}
+
+.benefit-icon {
+	width: 34px;
+	height: 34px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #e0b566;
+	font-size: 0.85rem;
+}
+
+.benefit-text strong {
+	display: block;
+	color: #f7f1eb;
+	font-size: 0.82rem;
+	margin-bottom: 2px;
+}
+
+.benefit-text span {
+	color: #a99b92;
+	font-size: 0.73rem;
+	line-height: 1.45;
+}
+
+.panel-footer {
+	position: relative;
+	z-index: 1;
+	padding-top: 35px;
+	color: #91837a;
+	font-size: 0.7rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+           FORM PANEL
+        ========================== */
+.form-panel {
+	padding: 45px 48px;
+}
+
+.form-header {
+	margin-bottom: 30px;
+}
+
+.form-header h2 {
+	margin: 0 0 7px;
+	color: var(--espresso);
+	font-family: "Playfair Display", serif;
+	font-size: 2rem;
+	letter-spacing: -0.4px;
+}
+
+.form-header p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.83rem;
+	line-height: 1.6;
+}
+
+/* =========================
+           FORM
+        ========================== */
+.form-group {
+	margin-bottom: 18px;
+}
+
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 15px;
+}
+
+label {
+	display: block;
+	margin-bottom: 7px;
+	color: var(--text);
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.required {
+	color: var(--terracotta);
+}
+
+.input-wrapper {
+	position: relative;
+}
+
+input[type="text"], input[type="email"], input[type="password"],
+	textarea {
+	width: 100%;
+	border: 1px solid var(--border);
+	border-radius: 11px;
+	background: #fff;
+	color: var(--text);
+	padding: 12px 13px;
+	font-family: inherit;
+	font-size: 0.84rem;
+	outline: none;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background
+		0.2s ease;
+}
+
+textarea {
+	min-height: 95px;
+	resize: vertical;
+	line-height: 1.5;
+}
+
+input::placeholder, textarea::placeholder {
+	color: #aaa29c;
+}
+
+input:focus, textarea:focus {
+	border-color: var(--terracotta);
+	background: #fff;
+	box-shadow: 0 0 0 4px rgba(184, 101, 69, 0.09);
+}
+
+/* =========================
+           ERROR STATE
+        ========================== */
+.input-error {
+	border-color: var(--danger) !important;
+	background: var(--danger-soft) !important;
+}
+
+.input-error:focus {
+	box-shadow: 0 0 0 4px rgba(182, 75, 69, 0.09);
+}
+
+.error-message {
+	margin-top: 5px;
+	color: var(--danger);
+	font-size: 0.72rem;
+	line-height: 1.4;
+}
+
+/* =========================
+   PASSWORD TOGGLE
+========================== */
+.password-wrapper {
+	position: relative;
+}
+
+.password-wrapper input {
+	padding-right: 65px;
+}
+
+.password-toggle {
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	border: none;
+	background: transparent;
+	color: var(--terracotta);
+	font-family: "DM Sans", sans-serif;
+	font-size: 0.72rem;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 5px 6px;
+	transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+	color: var(--terracotta-dark);
+}
+
+/* =========================
+           SUBMIT
+        ========================== */
+.btn-submit {
+	width: 100%;
+	min-height: 51px;
+	margin-top: 8px;
+	border: none;
+	border-radius: 12px;
+	background: var(--espresso);
+	color: white;
+	font-family: inherit;
+	font-size: 0.86rem;
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: 0 8px 18px rgba(36, 27, 23, 0.16);
+	transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s
+		ease;
+}
+
+.btn-submit:hover {
+	background: var(--espresso-soft);
+	transform: translateY(-1px);
+	box-shadow: 0 12px 24px rgba(36, 27, 23, 0.22);
+}
+
+.btn-submit:active {
+	transform: translateY(0);
+}
+
+/* =========================
+           FOOTER LINKS
+        ========================== */
+.footer-links {
+	margin-top: 23px;
+	padding-top: 21px;
+	border-top: 1px solid var(--border);
+	text-align: center;
+	color: var(--muted);
+	font-size: 0.75rem;
+	line-height: 1.9;
+}
+
+.footer-links a {
+	color: var(--terracotta);
+	font-weight: 700;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+	color: var(--terracotta-dark);
+	text-decoration: underline;
+}
+
+.footer-divider {
+	margin: 0 7px;
+	color: #c9beb4;
+}
+
+/* =========================
+           RESPONSIVE
+        ========================== */
+@media ( max-width : 850px) {
+	.registration-shell {
+		grid-template-columns: 1fr;
+		max-width: 580px;
+	}
+	.brand-panel {
+		padding: 34px 34px 30px;
+	}
+	.brand-mark {
+		margin-bottom: 30px;
+	}
+	.brand-panel h1 {
+		font-size: 2.5rem;
+	}
+	.partner-benefits {
+		grid-template-columns: 1fr 1fr;
+		margin-top: 30px;
+	}
+	.panel-footer {
+		display: none;
+	}
+	.form-panel {
+		padding: 38px 34px;
+	}
+}
+
+@media ( max-width : 580px) {
+	body {
+		padding: 15px;
+	}
+	.registration-shell {
+		border-radius: 21px;
+	}
+	.brand-panel {
+		padding: 29px 25px;
+	}
+	.brand-mark {
+		margin-bottom: 28px;
+	}
+	.brand-panel h1 {
+		font-size: 2.15rem;
+	}
+	.brand-description {
+		font-size: 0.83rem;
+	}
+	.partner-benefits {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+	.form-panel {
+		padding: 30px 22px;
+	}
+	.form-header h2 {
+		font-size: 1.75rem;
+	}
+	.form-row {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+}
+
+@media ( max-width : 380px) {
+	.brand-panel {
+		padding: 25px 20px;
+	}
+	.form-panel {
+		padding: 27px 18px;
+	}
+	.brand-panel h1 {
+		font-size: 2rem;
+	}
+}
+</style>
+
+</head>
+<script>
+    function togglePassword() {
+
+        const passwordInput = document.getElementById("password");
+        const toggleText = document.getElementById("passwordToggleText");
+        const toggleButton = document.querySelector(".password-toggle");
+
+        if (passwordInput.type === "password") {
+
+            passwordInput.type = "text";
+            toggleText.textContent = "Hide";
+            toggleButton.setAttribute("aria-label", "Hide password");
+
+        } else {
+
+            passwordInput.type = "password";
+            toggleText.textContent = "Show";
+            toggleButton.setAttribute("aria-label", "Show password");
+        }
+    }
+</script>
+
+<body>
+
+	<div class="registration-shell">
+
+		<!-- =========================
+         BRAND / PARTNER PANEL
+    ========================== -->
+
+		<section class="brand-panel">
+
+			<div class="brand-content">
+
+				<div class="brand-mark">
+
+					<span class="brand-icon">🍽️</span> <span>Caterly</span>
+
+				</div>
+
+
+				<div class="eyebrow">Partner Registration</div>
+
+
+				<h1>Turn your kitchen into someone's next celebration.</h1>
+
+
+				<p class="brand-description">Create your catering profile and
+					introduce your business to customers looking for memorable food and
+					dependable event service.</p>
+
+
+				<div class="partner-benefits">
+
+					<div class="benefit">
+
+						<div class="benefit-icon">✓</div>
+
+						<div class="benefit-text">
+
+							<strong>Showcase your catering business</strong> <span>
+								Present your business, dishes and packages in one professional
+								profile. </span>
+
+						</div>
+
+					</div>
+
+
+					<div class="benefit">
+
+						<div class="benefit-icon">★</div>
+
+						<div class="benefit-text">
+
+							<strong>Build your reputation</strong> <span> Deliver
+								great experiences and collect reviews from your customers. </span>
+
+						</div>
+
+					</div>
+
+
+					<div class="benefit">
+
+						<div class="benefit-icon">♢</div>
+
+						<div class="benefit-text">
+
+							<strong>Manage event bookings</strong> <span> Keep your
+								catering orders and customer requests organized from one place.
+							</span>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+			<div class="panel-footer">Your registration will be reviewed
+				before your catering business becomes available to customers.</div>
+
+		</section>
+
+
+		<!-- =========================
+         REGISTRATION FORM
+    ========================== -->
+
+		<section class="form-panel">
+
+			<div class="form-header">
+
+				<h2>Create your partner account</h2>
+
+				<p>Enter your business details below to get started with
+					Catering Hub.</p>
+
+			</div>
+
+
+			<form th:action="@{/register/caterer}" th:object="${catererDto}"
+				method="post">
+
+
+				<!-- =========================
+                 BUSINESS NAME
+            ========================== -->
+
+				<div class="form-group">
+
+					<label for="businessName"> Business / Catering Name <span
+						class="required">*</span>
+					</label> <input type="text" id="businessName" th:field="*{businessName}"
+						th:classappend="${#fields.hasErrors('businessName')} ? 'input-error' : ''"
+						placeholder="e.g., Royal Feast Catering" />
+
+					<div class="error-message"
+						th:if="${#fields.hasErrors('businessName')}"
+						th:errors="*{businessName}"></div>
+
+				</div>
+
+
+				<!-- =========================
+                 EMAIL + PHONE
+            ========================== -->
+
+				<div class="form-row">
+
+					<div class="form-group">
+
+						<label for="email"> Business Email <span class="required">*</span>
+						</label> <input type="email" id="email" th:field="*{email}"
+							th:classappend="${#fields.hasErrors('email')} ? 'input-error' : ''"
+							placeholder="caterer@example.com" />
+
+						<div class="error-message" th:if="${#fields.hasErrors('email')}"
+							th:errors="*{email}"></div>
+
+					</div>
+
+
+					<div class="form-group">
+
+						<label for="phone"> Phone Number <span class="required">*</span>
+						</label> <input type="text" id="phone" th:field="*{phone}"
+							th:classappend="${#fields.hasErrors('phone')} ? 'input-error' : ''"
+							placeholder="+91 9876543210" />
+
+						<div class="error-message" th:if="${#fields.hasErrors('phone')}"
+							th:errors="*{phone}"></div>
+
+					</div>
+
+				</div>
+
+
+				<!-- =========================
+     PASSWORD
+========================== -->
+				<div class="form-group">
+
+					<label for="password"> Password <span class="required">*</span>
+					</label>
+
+					<div class="password-wrapper">
+
+						<input type="password" id="password" th:field="*{password}"
+							th:classappend="${#fields.hasErrors('password')} ? 'input-error' : ''"
+							placeholder="Minimum 6 characters" />
+
+						<button type="button" class="password-toggle"
+							onclick="togglePassword()" aria-label="Show password">
+
+							<span id="passwordToggleText">Show</span>
+
+						</button>
+
+					</div>
+
+					<div class="password-note">Use a password you don't use for
+						other accounts.</div>
+
+					<div class="error-message" th:if="${#fields.hasErrors('password')}"
+						th:errors="*{password}"></div>
+
+				</div>
+
+
+				<!-- =========================
+                 BUSINESS ADDRESS
+            ========================== -->
+
+				<div class="form-group">
+
+					<label for="address"> Kitchen / Business Address <span
+						class="required">*</span>
+					</label>
+
+					<textarea id="address" rows="3" th:field="*{address}"
+						th:classappend="${#fields.hasErrors('address')} ? 'input-error' : ''"
+						placeholder="Enter your full operational address"></textarea>
+
+					<div class="error-message" th:if="${#fields.hasErrors('address')}"
+						th:errors="*{address}"></div>
+
+				</div>
+
+
+				<!-- =========================
+                 SUBMIT
+            ========================== -->
+
+				<button type="submit" class="btn-submit">
+
+					Create Catering Partner Account <span>→</span>
+
+				</button>
+
+
+			</form>
+
+
+			<!-- =========================
+             FOOTER LINKS
+        ========================== -->
+
+			<div class="footer-links">
+
+				<div>
+					Already registered? <a th:href="@{/login}"> Sign In </a>
+				</div>
+
+				<div>
+					Looking to book a caterer? <a th:href="@{/register/customer}">
+						Customer Signup </a>
+				</div>
+
+			</div>
+
+		</section>
+
+	</div>
+
+</body>
+</html>
