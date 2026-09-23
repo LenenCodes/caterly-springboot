@@ -22,7 +22,7 @@ public class CatersMainSpringbootApplication {
 	        usersRepository.findByEmail("admin@caters.com").ifPresentOrElse(
 	            admin -> {
 	               
-	                admin.setPassword(passwordEncoder.encode("ADMIN_PASSWORD"));
+	            	admin.setPassword(passwordEncoder.encode(System.getenv("ADMIN_PASSWORD")));
 	                usersRepository.save(admin);
 	            },
 	            () -> {
