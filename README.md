@@ -208,7 +208,6 @@ DB_PASSWORD=your_database_password
 ADMIN_PASSWORD=your_admin_password
 ```
 
-Do not commit your real credentials to Git.
 
 ## Running the Project
 
